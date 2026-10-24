@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Review Specialist"
+  short_description: "Review code for concrete correctness risks"
+  default_prompt: "Use $code-review-specialist to review this change for correctness, security, and missing tests."

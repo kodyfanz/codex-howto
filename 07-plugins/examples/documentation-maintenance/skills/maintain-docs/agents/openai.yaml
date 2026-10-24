@@ -1,0 +1,4 @@
+interface:
+  display_name: "Maintain Docs"
+  short_description: "Keep repository docs aligned with verified behavior"
+  default_prompt: "Use $maintain-docs to update docs for this change."

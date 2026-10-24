@@ -1,0 +1,29 @@
+# Prompt before remote pull-request reads outside the sandbox.
+prefix_rule(
+    pattern = ["gh", "pr", ["view", "list"]],
+    decision = "prompt",
+    justification = "Remote pull-request access requires review.",
+    match = [
+        "gh pr view 42",
+        "gh pr list",
+    ],
+    not_match = [
+        "gh issue list",
+        "gh pr create",
+    ],
+)
+
+# Never permit a force push through an approval prompt.
+prefix_rule(
+    pattern = ["git", "push", ["--force", "-f"]],
+    decision = "forbidden",
+    justification = "Use a normal push or review a safer force-with-lease workflow.",
+    match = [
+        "git push --force origin example-branch",
+        "git push -f origin example-branch",
+    ],
+    not_match = [
+        "git push origin example-branch",
+        "git push --force-with-lease origin example-branch",
+    ],
+)

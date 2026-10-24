@@ -1,0 +1,29 @@
+name: Read-only Codex review
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Run read-only Codex review
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          prompt-file: 10-cli-and-automation/examples/read-only-review.md
+          output-file: codex-review.json
+          sandbox: read-only
+          safety-strategy: drop-sudo
+          codex-args: >-
+            ["--ephemeral", "--output-schema",
+            "10-cli-and-automation/examples/review-schema.json"]

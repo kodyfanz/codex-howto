@@ -1,0 +1,14 @@
+# Replace the reserved placeholder URL and environment-variable name.
+[mcp_servers.example_service]
+url = "https://mcp.example.invalid/mcp"
+bearer_token_env_var = "EXAMPLE_MCP_TOKEN"
+enabled_tools = ["search", "read_document"]
+default_tools_approval_mode = "prompt"
+startup_timeout_sec = 15
+tool_timeout_sec = 45
+enabled = false
+
+[mcp_servers.example_service.tools.search]
+approval_mode = "approve"
+output_token_limit = 12000
+

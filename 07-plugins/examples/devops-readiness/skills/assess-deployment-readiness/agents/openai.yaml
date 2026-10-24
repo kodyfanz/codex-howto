@@ -1,0 +1,4 @@
+interface:
+  display_name: "Assess Deployment Readiness"
+  short_description: "Review deployment evidence without deploying"
+  default_prompt: "Use $assess-deployment-readiness to review this plan."

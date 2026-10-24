@@ -1,0 +1,18 @@
+{
+  "description": "Remind agents that this plugin reviews readiness only.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "^(startup|resume)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$PLUGIN_ROOT/hooks/session_start.py\"",
+            "timeout": 5,
+            "statusMessage": "Loading deployment-review boundary"
+          }
+        ]
+      }
+    ]
+  }
+}

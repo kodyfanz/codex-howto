@@ -1,0 +1,31 @@
+{
+  "description": "Safe tutorial hooks for this repository.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "^(startup|resume)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/06-hooks/examples/session_start.py\"",
+            "timeout": 5,
+            "statusMessage": "Loading repository safety context"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "^Bash$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/06-hooks/examples/pre_tool_policy.py\"",
+            "timeout": 5,
+            "statusMessage": "Checking shell command"
+          }
+        ]
+      }
+    ]
+  }
+}

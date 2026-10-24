@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Change"
+  short_description: "Find actionable risks in a code change"
+  default_prompt: "Use $review-change to review the current diff."

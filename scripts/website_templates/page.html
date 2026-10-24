@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An independent, practical guide to Codex workflows.">
+  <title>{{TITLE}} · Codex How To</title>
+  <link rel="icon" href="{{ASSET_PREFIX}}resources/logos/codex-howto-logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ASSET_PREFIX}}assets/site.css">
+  <script defer src="{{ASSET_PREFIX}}assets/site.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#content">Skip to content</a>
+  <header class="topbar">
+    <a class="brand" href="{{HOME_URL}}" aria-label="Codex How To home">
+      <img src="{{ASSET_PREFIX}}resources/logos/codex-howto-logo.svg" alt="Codex How To">
+    </a>
+    <div class="topbar-actions">
+      <button id="nav-toggle" class="icon-button" type="button" aria-expanded="false" aria-controls="sidebar">Contents</button>
+      <button id="theme-toggle" class="icon-button" type="button" aria-label="Switch color theme">Theme</button>
+    </div>
+  </header>
+  <div class="shell">
+    <aside id="sidebar" class="sidebar" aria-label="Course navigation">
+      <p class="eyebrow">English curriculum</p>
+      <nav>{{NAVIGATION}}</nav>
+    </aside>
+    <main id="content" class="content {{PAGE_CLASS}}">
+      <div class="reading-meta"><span>{{SECTION}}</span><span>{{POSITION}}</span></div>
+      <article>{{CONTENT}}</article>
+      <nav class="pager" aria-label="Adjacent lessons">{{PAGER}}</nav>
+    </main>
+  </div>
+</body>
+</html>

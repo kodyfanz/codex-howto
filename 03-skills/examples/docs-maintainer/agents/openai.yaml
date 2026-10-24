@@ -1,0 +1,4 @@
+interface:
+  display_name: "Documentation Maintainer"
+  short_description: "Update documentation from repository evidence"
+  default_prompt: "Use $docs-maintainer to update the affected documentation and verify its links and commands."

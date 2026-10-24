@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="220" viewBox="0 0 960 220" role="img" aria-labelledby="title desc">
+  <title id="title">Codex How To</title>
+  <desc id="desc">A guided path moving through code brackets beside the words Codex How To.</desc>
+  <defs>
+    <linearGradient id="path" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0F766E"/>
+      <stop offset="1" stop-color="#2563EB"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="220" rx="28" fill="#F8FAFC"/>
+  <g transform="translate(42 34)">
+    <rect width="152" height="152" rx="32" fill="#E2E8F0"/>
+    <path d="M57 42 27 76l30 34" fill="none" stroke="#0F172A" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="m95 42 30 34-30 34" fill="none" stroke="#0F172A" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M48 121c16-32 34-45 60-59" fill="none" stroke="url(#path)" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="48" cy="121" r="8" fill="#0F766E"/>
+    <circle cx="108" cy="62" r="8" fill="#2563EB"/>
+  </g>
+  <text x="226" y="104" fill="#0F172A" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="64" font-weight="750" letter-spacing="-2">Codex</text>
+  <text x="226" y="163" fill="#334155" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="48" font-weight="520" letter-spacing="4">HOW TO</text>
+  <path d="M608 68h288" stroke="#CBD5E1" stroke-width="4" stroke-linecap="round"/>
+  <path d="M608 104h230" stroke="#CBD5E1" stroke-width="4" stroke-linecap="round"/>
+  <path d="M608 140h264" stroke="#CBD5E1" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="608" cy="68" r="7" fill="#0F766E"/>
+  <circle cx="608" cy="104" r="7" fill="#0891B2"/>
+  <circle cx="608" cy="140" r="7" fill="#2563EB"/>
+</svg>
+

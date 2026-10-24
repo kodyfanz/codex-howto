@@ -1,0 +1,20 @@
+{
+  "name": "pr-review",
+  "version": "0.1.0",
+  "description": "Evidence-first review of local code changes.",
+  "author": {
+    "name": "Codex How To contributors"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "PR Review",
+    "shortDescription": "Review a local change for actionable risks",
+    "longDescription": "Review a diff for correctness, security, compatibility, and missing tests without publishing or changing the code.",
+    "developerName": "Codex How To contributors",
+    "category": "Developer Tools",
+    "capabilities": ["Read"],
+    "defaultPrompt": [
+      "Review the current diff and report only actionable findings."
+    ]
+  }
+}

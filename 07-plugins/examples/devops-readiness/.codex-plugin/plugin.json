@@ -1,0 +1,20 @@
+{
+  "name": "devops-readiness",
+  "version": "0.1.0",
+  "description": "Assess deployment plans without performing a deployment.",
+  "author": {
+    "name": "Codex How To contributors"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "DevOps Readiness",
+    "shortDescription": "Check a deployment plan before execution",
+    "longDescription": "Validate deployment evidence, rollback planning, ownership, and monitoring without applying infrastructure changes.",
+    "developerName": "Codex How To contributors",
+    "category": "Developer Tools",
+    "capabilities": ["Read"],
+    "defaultPrompt": [
+      "Assess this deployment plan and identify readiness gaps."
+    ]
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Lesson Quiz"
+  short_description: "Quiz one completed Codex How To lesson"
+  default_prompt: "Use $lesson-quiz to quiz me on a completed Codex How To lesson."

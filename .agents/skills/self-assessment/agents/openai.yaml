@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Self-Assessment"
+  short_description: "Assess Codex skills and build a learning path"
+  default_prompt: "Use $self-assessment to assess my Codex experience and recommend where I should start."
