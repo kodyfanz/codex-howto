@@ -62,6 +62,31 @@ class DocumentationUtilityTests(unittest.TestCase):
         self.assertIn("<blockquote><p>one two</p></blockquote>", rendered)
         self.assertIn('href="01-demo/index.html"', rendered)
 
+    def test_markdown_renderer_keeps_multiline_picture_and_hides_lint_comments(self) -> None:
+        rendered = render_markdown(
+            """# Demo
+
+<!-- markdownlint-disable MD033 -->
+<picture>
+  <source
+    media="(prefers-color-scheme: dark)"
+    srcset="resources/logo-dark.svg"
+  >
+  <img alt="Demo logo" src="resources/logo.svg">
+</picture>
+<!-- markdownlint-enable MD033 -->
+""",
+            PurePosixPath("README.md"),
+            PurePosixPath("index.html"),
+            {PurePosixPath("README.md"): PurePosixPath("index.html")},
+        )
+        self.assertIn("<picture>", rendered)
+        self.assertIn('<source\nmedia="(prefers-color-scheme: dark)"', rendered)
+        self.assertIn('srcset="resources/logo-dark.svg"', rendered)
+        self.assertIn('<img alt="Demo logo" src="resources/logo.svg">', rendered)
+        self.assertNotIn("markdownlint-disable", rendered)
+        self.assertNotIn("&lt;source", rendered)
+
     def test_mermaid_renderer_produces_svg(self) -> None:
         svg = render_svg("flowchart LR\n A[Start] --> B[Finish]")
         self.assertIn("<svg", svg)

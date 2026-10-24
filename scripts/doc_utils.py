@@ -346,6 +346,11 @@ def render_markdown(
             code_lines.append(line)
             index += 1
             continue
+        if line.strip().startswith("<!--") and line.strip().endswith("-->"):
+            flush_paragraph()
+            close_list()
+            index += 1
+            continue
         heading = HEADING_RE.match(line)
         if heading:
             flush_paragraph()
@@ -404,12 +409,15 @@ def render_markdown(
         if not line.strip():
             flush_paragraph()
             close_list()
-        elif line.startswith("<picture") or line.startswith("</picture") or line.lstrip().startswith(("<source ", "<img ")):
+        elif line.startswith("<picture") or line.startswith("</picture") or line.lstrip().startswith(("<source", "<img")):
             flush_paragraph()
             close_list()
             if not epub:
-                raw = line.replace('src="resources/', 'src="resources/').replace('srcset="resources/', 'srcset="resources/')
-                output.append(raw)
+                raw_lines = [line.strip()]
+                while not raw_lines[-1].endswith(">") and index + 1 < len(lines):
+                    index += 1
+                    raw_lines.append(lines[index].strip())
+                output.append("\n".join(raw_lines))
         else:
             paragraph.append(line)
         index += 1
