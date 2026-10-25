@@ -1,0 +1,107 @@
+name: Deploy production
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codex-howto-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Validate and build website
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Run release quality gate
+        run: python3 scripts/quality_gate.py
+
+      - name: Upload website artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: production-site
+          path: site/
+          if-no-files-found: error
+          retention-days: 1
+
+  deploy:
+    name: Deploy website
+    needs: build
+    if: >-
+      github.event_name != 'pull_request' &&
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+
+    permissions:
+      actions: read
+      deployments: write
+
+    steps:
+      - name: Download website artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: production-site
+          path: site/
+
+      - name: Prepare SSH credentials
+        shell: bash
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          test -n "$DEPLOY_KEY" || { echo "DEPLOY_SSH_KEY is empty" >&2; exit 1; }
+          test -n "$DEPLOY_KNOWN_HOSTS" || { echo "DEPLOY_KNOWN_HOSTS is empty" >&2; exit 1; }
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$DEPLOY_KEY" > "$HOME/.ssh/deploy_key"
+          chmod 600 "$HOME/.ssh/deploy_key"
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/known_hosts"
+
+      - name: Deploy website files to production
+        shell: bash
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
+        run: |
+          set -euo pipefail
+          for name in DEPLOY_HOST DEPLOY_USER DEPLOY_PATH DEPLOY_PORT; do
+            if [[ -z "${!name}" ]]; then
+              echo "$name is not configured in the production environment" >&2
+              exit 1
+            fi
+          done
+          if [[ ! "$DEPLOY_PORT" =~ ^[0-9]+$ ]]; then
+            echo "DEPLOY_PORT must be a numeric SSH port" >&2
+            exit 1
+          fi
+          if [[ "$DEPLOY_PATH" != /* || "$DEPLOY_PATH" == "/" ]]; then
+            echo "DEPLOY_PATH must be an absolute dedicated website directory" >&2
+            exit 1
+          fi
+          command -v rsync >/dev/null
+          rsync -az --delete \
+            -e "ssh -i $HOME/.ssh/deploy_key -p $DEPLOY_PORT -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts" \
+            site/ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
