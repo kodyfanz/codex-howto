@@ -149,9 +149,20 @@ class BuildTests(unittest.TestCase):
     def test_website_contains_no_template_or_binary_markers(self) -> None:
         for page in self.site.rglob("*.html"):
             content = page.read_bytes()
-            for marker in (b"<title>{{TITLE}}", b' href="{{ASSET_PREFIX}}', b"{{NAVIGATION}}\n    </nav>"):
+            for marker in (
+                b"<title>{{TITLE}}",
+                b' href="{{ASSET_PREFIX}}',
+                b' href="{{CSS_URL}}',
+                b' src="{{JS_URL}}',
+                b"{{NAVIGATION}}\n    </nav>",
+            ):
                 self.assertNotIn(marker, content)
             self.assertNotIn(b"\x00", content)
+
+    def test_website_versions_static_assets(self) -> None:
+        page = (self.site / "index.html").read_text(encoding="utf-8")
+        self.assertRegex(page, r'href="assets/site\.css\?v=[0-9a-f]{12}"')
+        self.assertRegex(page, r'src="assets/site\.js\?v=[0-9a-f]{12}"')
 
     def test_website_code_blocks_have_copy_controls(self) -> None:
         pages = list(self.site.rglob("*.html"))

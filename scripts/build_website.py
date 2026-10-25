@@ -54,11 +54,15 @@ def build_website(root: Path, output: Path) -> Path:
     page_map = {page.relative: page.output for page in pages}
     template_dir = Path(__file__).parent / "website_templates"
     template = (template_dir / "page.html").read_text(encoding="utf-8")
+    css_path = template_dir / "site.css"
+    js_path = template_dir / "site.js"
+    css_hash = hashlib.sha256(css_path.read_bytes()).hexdigest()[:12]
+    js_hash = hashlib.sha256(js_path.read_bytes()).hexdigest()[:12]
     if output.exists():
         shutil.rmtree(output)
     (output / "assets").mkdir(parents=True)
-    shutil.copy2(template_dir / "site.css", output / "assets/site.css")
-    shutil.copy2(template_dir / "site.js", output / "assets/site.js")
+    shutil.copy2(css_path, output / "assets/site.css")
+    shutil.copy2(js_path, output / "assets/site.js")
     shutil.copytree(root / "resources/logos", output / "resources/logos")
     (output / "assets/mermaid").mkdir(parents=True, exist_ok=True)
 
@@ -79,6 +83,8 @@ def build_website(root: Path, output: Path) -> Path:
         replacements = {
             "{{TITLE}}": html.escape(page.title),
             "{{ASSET_PREFIX}}": asset_prefix,
+            "{{CSS_URL}}": f"{asset_prefix}assets/site.css?v={css_hash}",
+            "{{JS_URL}}": f"{asset_prefix}assets/site.js?v={js_hash}",
             "{{HOME_URL}}": relative_url(page.output, PurePosixPath("index.html")),
             "{{NAVIGATION}}": render_navigation(page, pages),
             "{{PAGE_CLASS}}": "home" if page.relative == PurePosixPath("README.md") else "",
