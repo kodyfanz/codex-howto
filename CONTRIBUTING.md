@@ -1,10 +1,8 @@
 # Contributing to Codex How To
 
-Contributions should make Codex easier to learn through precise explanations,
-tested examples, and safe workflows.
+Contributions should make Codex easier to learn through precise explanations, tested examples, and safe workflows.
 
-The canonical source repository is [github.com/kodyfanz/codex-howto](https://github.com/kodyfanz/codex-howto).
-Use it to review the project, open issues, and submit pull requests.
+The canonical source repository is [github.com/kodyfanz/codex-howto](https://github.com/kodyfanz/codex-howto). Use it to review the project, open issues, and submit pull requests.
 
 ## Good contributions
 
@@ -35,10 +33,8 @@ Use it to review the project, open issues, and submit pull requests.
 
 - Use official OpenAI documentation as the primary source.
 - Distinguish CLI, IDE, desktop app, cloud, and ChatGPT Work behavior.
-- State when availability depends on account, workspace policy, operating system,
-  or staged rollout.
-- Do not infer current behavior from generated site or EPUB artifacts; verify
-  it against official OpenAI documentation.
+- State when availability depends on account, workspace policy, operating system, or staged rollout.
+- Do not infer current behavior from generated site or EPUB artifacts; verify it against official OpenAI documentation.
 
 ## Pull request checklist
 
@@ -52,6 +48,4 @@ Use it to review the project, open issues, and submit pull requests.
 
 ## Conduct and security
 
-Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). Report
-security-sensitive issues according to the [Security Policy](SECURITY.md), not
-in a public issue.
+Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). Report security-sensitive issues according to the [Security Policy](SECURITY.md), not in a public issue.

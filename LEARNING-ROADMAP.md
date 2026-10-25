@@ -1,23 +1,16 @@
 # Codex learning roadmap
 
-This roadmap moves from a safe first repository task to reusable workflows,
-integrations, and advanced automation. If you are new to Codex, start with
-Module 1 and continue to Module 2 when you want durable repository guidance.
-Modules 3–10 are specialized; choose them when your work calls for those
-capabilities. Experienced users can use the self-check to choose a starting
-point.
+This roadmap moves from a safe first repository task to reusable workflows, integrations, and advanced automation. If you are new to Codex, start with Module 1 and continue to Module 2 when you want durable repository guidance. Modules 3–10 are specialized; choose them when your work calls for those capabilities. Experienced users can use the self-check to choose a starting point.
 
 Use the [glossary](GLOSSARY.md) whenever a term or abbreviation is unfamiliar.
-The optional `$self-assessment` and `$lesson-quiz` skills are available when
-your Codex surface loads this repository's skills. You can use this roadmap
-and complete the module exercises without them.
+
+The optional `$self-assessment` and `$lesson-quiz` skills are available when your Codex surface loads this repository's skills. You can use this roadmap and complete the module exercises without them.
 
 ## 1. Choose a starting point
 
 Check the capabilities you can already demonstrate:
 
-This nine-item checklist is a simple roadmap placement aid. It is not the
-eight-question quick score used by the interactive self-assessment skill.
+This nine-item checklist is a simple roadmap placement aid. It is not the eight-question quick score used by the interactive self-assessment skill.
 
 - [ ] Open Codex on a repository and review its changes.
 - [ ] Identify the Codex surface and permission mode in use.
@@ -36,15 +29,11 @@ eight-question quick score used by the interactive self-assessment skill.
 |              5–7 | [Milestone 3: Connected automation](#milestone-3-connected-automation)               | Connect tools, enforce lifecycle checks, and distribute workflows |
 |              8–9 | [Milestone 4: Advanced operation](#milestone-4-advanced-operation)                     | Control authority, isolate changes, and automate reviewed work    |
 
-When unsure, start one module earlier and complete its hands-on outcome before
-moving forward.
+When unsure, start one module earlier and complete its hands-on outcome before moving forward.
 
 ## 2. Roadmap at a glance
 
-The overview groups the ten modules into four milestones. Each milestone below
-contains the detailed module links, child steps, and a practical checkpoint.
-Module 1 introduces permission basics before the later modules cover external
-integrations and automation; Module 8 is the in-depth safety reference.
+The overview groups the ten modules into four milestones. Each milestone below contains the detailed module links, child steps, and a practical checkpoint. Module 1 introduces permission basics before the later modules cover external integrations and automation; Module 8 is the in-depth safety reference.
 
 ```mermaid
 flowchart TD
@@ -64,11 +53,9 @@ flowchart TD
 
 ### Milestone 1 — Safe daily use
 
-**Modules:** [1. Getting started](01-getting-started/README.md) · [2. Project
-instructions](02-agents-md/README.md)
+**Modules:** [1. Getting started](01-getting-started/README.md) · [2. Project instructions](02-agents-md/README.md)
 
-**Goal:** Complete repository tasks with clear scope, review changes, and encode
-stable team conventions in `AGENTS.md`.
+**Goal:** Complete repository tasks with clear scope, review changes, and encode stable team conventions in `AGENTS.md`.
 
 ```mermaid
 flowchart LR
@@ -85,8 +72,7 @@ flowchart LR
 
 **Modules:** [3. Skills](03-skills/README.md) · [4. Subagents](04-subagents/README.md)
 
-**Goal:** Package a repeatable workflow as a skill and delegate a bounded,
-independent investigation to a subagent.
+**Goal:** Package a repeatable workflow as a skill and delegate a bounded, independent investigation to a subagent.
 
 ```mermaid
 flowchart LR
@@ -103,8 +89,7 @@ flowchart LR
 
 **Modules:** [5. MCP](05-mcp/README.md) · [6. Hooks](06-hooks/README.md) · [7. Plugins](07-plugins/README.md)
 
-**Goal:** Connect an external capability, automate a deterministic event, and
-distribute the combined workflow as a plugin.
+**Goal:** Connect an external capability, automate a deterministic event, and distribute the combined workflow as a plugin.
 
 ```mermaid
 flowchart LR
@@ -122,8 +107,7 @@ flowchart LR
 **Modules:** [8. Safety and worktrees](08-safety-and-worktrees/README.md) · [9. Advanced
 workflows](09-advanced-workflows/README.md) · [10. CLI and automation](10-cli-and-automation/README.md)
 
-**Goal:** Choose appropriate permission boundaries, isolate changes, manage
-long-running work, and run Codex safely from scripts or CI.
+**Goal:** Choose appropriate permission boundaries, isolate changes, manage long-running work, and run Codex safely from scripts or CI.
 
 ```mermaid
 flowchart LR
@@ -145,6 +129,4 @@ A module is complete when you can:
 3. Reproduce the verification step without relying on hidden local state.
 4. Describe one safe recovery path when the exercise fails.
 
-For full curriculum coverage, complete all four milestones. Otherwise, use the
-[feature catalog](CATALOG.md) as a capability-first reference and return to the
-[complete index](INDEX.md) when you need a specific module.
+For full curriculum coverage, complete all four milestones. Otherwise, use the [feature catalog](CATALOG.md) as a capability-first reference and return to the [complete index](INDEX.md) when you need a specific module.

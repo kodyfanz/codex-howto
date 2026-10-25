@@ -10,21 +10,13 @@
 </picture>
 <!-- markdownlint-enable MD033 -->
 
-If you are new to Codex, start with one small repository task in Module 1. You
-do not need an assessment or all ten modules to get useful work done. The later
-modules cover specialized capabilities to explore when your work calls for
-them.
+If you are new to Codex, start with one small repository task in Module 1. You do not need an assessment or all ten modules to get useful work done. The later modules cover specialized capabilities to explore when your work calls for them.
 
-> **Project status**: The authored curriculum, examples, validation tooling,
-> website, EPUB, and release archive pass the offline quality gate. That gate
-> checks repository content and generated outputs; it does not guarantee that
-> Codex product behavior on linked external pages has not changed.
+> **Project status**: The authored curriculum, examples, validation tooling, website, EPUB, and release archive pass the offline quality gate. That gate checks repository content and generated outputs; it does not guarantee that Codex product behavior on linked external pages has not changed.
 
 ## Why this guide exists
 
-Official documentation is the source of truth for product behavior. This guide
-adds a progressive learning path, worked examples, reusable templates, and
-verification steps that show how Codex capabilities fit together.
+Official documentation is the source of truth for product behavior. This guide adds a progressive learning path, worked examples, reusable templates, and verification steps that show how Codex capabilities fit together.
 
 | Official OpenAI documentation | Codex How To                        |
 | ----------------------------- | ----------------------------------- |
@@ -38,9 +30,7 @@ verification steps that show how Codex capabilities fit together.
 **New to Codex?** Start with [Module 1: Getting started](01-getting-started/README.md).
 You can complete its first exercise without taking an assessment.
 
-**Already use Codex?** The optional [`$self-assessment`](.agents/skills/self-assessment/SKILL.md)
-skill can suggest a path when your Codex surface has loaded repository skills.
-Otherwise, use the [learning roadmap](LEARNING-ROADMAP.md) to choose a module.
+**Already use Codex?** The optional [`$self-assessment`](.agents/skills/self-assessment/SKILL.md) skill can suggest a path when your Codex surface has loaded repository skills. Otherwise, use the [learning roadmap](LEARNING-ROADMAP.md) to choose a module.
 
 If you want to jump to a topic, choose from the options below:
 
@@ -51,13 +41,9 @@ If you want to jump to a topic, choose from the options below:
 | Coordinating complex work    | [Subagents](04-subagents/README.md)             | Delegate bounded work effectively     |
 | Integrating external systems | [MCP](05-mcp/README.md)                         | Connect tools and live context safely |
 
-See the [learning roadmap](LEARNING-ROADMAP.md) for the complete sequence and
-the [feature catalog](CATALOG.md) for a capability-first view. Use the
-[glossary](GLOSSARY.md) whenever a Codex or AI term is unfamiliar.
+See the [learning roadmap](LEARNING-ROADMAP.md) for the complete sequence and the [feature catalog](CATALOG.md) for a capability-first view. Use the [glossary](GLOSSARY.md) whenever a Codex or AI term is unfamiliar.
 
-Modules 1–2 cover first tasks and durable repository instructions. Modules
-3–10 are specialized topics; choose them as needed. Complete all ten only if
-you want the full curriculum.
+Modules 1–2 cover first tasks and durable repository instructions. Modules 3–10 are specialized topics; choose them as needed. Complete all ten only if you want the full curriculum.
 
 ## Curriculum
 
@@ -102,8 +88,7 @@ codex-howto/
 └── resources/                # Visual assets and reusable resources
 ```
 
-The repository is standalone: authored Markdown and examples are the curriculum
-source, while `site/` and `dist/` are generated release artifacts.
+The repository is standalone: authored Markdown and examples are the curriculum source, while `site/` and `dist/` are generated release artifacts.
 
 ## Documentation principles
 
@@ -128,14 +113,10 @@ source, while `site/` and `dist/` are generated release artifacts.
 
 ## Included learning skills
 
-- `$self-assessment` — optionally identify demonstrated experience and
-  prioritize modules.
-- `$lesson-quiz` — optionally quiz yourself on a completed module. The current
-  question bank covers modules 1 through 10.
+- `$self-assessment` — optionally identify demonstrated experience and prioritize modules.
+- `$lesson-quiz` — optionally quiz yourself on a completed module. The current question bank covers modules 1 through 10.
 
-These skills are extras for Codex surfaces that load skills from this
-repository. If a skill is unavailable, follow the roadmap or module exercises
-directly.
+These skills are extras for Codex surfaces that load skills from this repository. If a skill is unavailable, follow the roadmap or module exercises directly.
 
 ## Build and validate
 
@@ -145,16 +126,13 @@ The release toolchain requires only Python 3.10 or newer:
 python3 scripts/quality_gate.py
 ```
 
-It validates Markdown, internal links, cross-references, Mermaid blocks,
-structured examples, skills, plugins, and tests before building:
+It validates Markdown, internal links, cross-references, Mermaid blocks, structured examples, skills, plugins, and tests before building:
 
 - `site/` — responsive, offline-friendly static website.
 - `dist/codex-howto.epub` — validated EPUB 3 guide.
-- `dist/codex-howto-release.zip` — source, website, and EPUB without generated
-  caches or unrelated working files.
+- `dist/codex-howto-release.zip` — source, website, and EPUB without generated caches or unrelated working files.
 
-See [release tooling](scripts/README.md) and the
-[asset and licensing inventory](docs/ASSET_LICENSES.md) for details.
+See [release tooling](scripts/README.md) and the [asset and licensing inventory](docs/ASSET_LICENSES.md) for details.
 
 ## License
 

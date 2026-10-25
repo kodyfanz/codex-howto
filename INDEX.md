@@ -13,8 +13,7 @@
 9. [Advanced workflows](09-advanced-workflows/README.md)
 10. [CLI and automation](10-cli-and-automation/README.md)
 
-For everyday repository use, begin with Modules 1–2. Modules 3–10 cover
-specialized capabilities and can be studied when a task calls for them.
+For everyday repository use, begin with Modules 1–2. Modules 3–10 cover specialized capabilities and can be studied when a task calls for them.
 
 ## Project documentation
 
@@ -37,14 +36,9 @@ specialized capabilities and can be studied when a task calls for them.
 
 - **Outline**: structure and completion criteria exist.
 - **Draft**: lesson content exists but examples are not fully verified.
-- **Verified**: commands, configuration, links, and exercises pass the module's
-  checks.
+- **Verified**: commands, configuration, links, and exercises pass the module's checks.
 
-Modules 1–10 are marked **Verified** based on lesson review and the repository
-quality gate for internal links, examples, extension schemas, and generated
-documentation. The offline gate cannot guarantee that Codex behavior on
-external product pages remains current. Consult each module's official
-resources before relying on version-sensitive details.
+Modules 1–10 are marked **Verified** based on lesson review and the repository quality gate for internal links, examples, extension schemas, and generated documentation. The offline gate cannot guarantee that Codex behavior on external product pages remains current. Consult each module's official resources before relying on version-sensitive details.
 
 ## Project skills
 

@@ -1,24 +1,16 @@
 # Codex How To project task register
 
-This file is the living task register for Codex How To. It records what the
-project has already delivered, what should be improved next, and where each
-claim or implementation can be verified.
+This file is the living task register for Codex How To. It records what the project has already delivered, what should be improved next, and where each claim or implementation can be verified.
 
-The repository remains English-only. Keep task descriptions, acceptance
-criteria, and links in English so this file can be included in the website,
-EPUB, and release archive.
+The repository remains English-only. Keep task descriptions, acceptance criteria, and links in English so this file can be included in the website, EPUB, and release archive.
 
 ## How to maintain this file
 
-- Mark a task `[x]` only when its acceptance criteria are verified and the
-  linked artifact exists.
+- Mark a task `[x]` only when its acceptance criteria are verified and the linked artifact exists.
 - Keep one task focused on one reviewable outcome.
-- Link internal work with relative repository paths; link Codex behavior to an
-  official OpenAI documentation page.
-- Add a short note under a task when an account, product surface, feature flag,
-  or network connection is required.
-- Add new work under **Future backlog** before implementation begins. Move it to
-  **Completed work** only after the quality gate passes.
+- Link internal work with relative repository paths; link Codex behavior to an official OpenAI documentation page.
+- Add a short note under a task when an account, product surface, feature flag, or network connection is required.
+- Add new work under **Future backlog** before implementation begins. Move it to **Completed work** only after the quality gate passes.
 - Do not store credentials, private URLs, or generated logs in this register.
 
 Status: `[x]` done · `[>]` in progress · `[ ]` planned · `[-]` parked or
@@ -29,27 +21,21 @@ blocked by a policy decision.
 Make Codex approachable for learners at different levels by providing:
 
 1. A progressive ten-module path from first repository task to safe automation.
-2. Copy-ready examples that explain scope, authority, prerequisites, and
-   cleanup.
+2. Copy-ready examples that explain scope, authority, prerequisites, and cleanup.
 3. Small practical exercises with observable verification steps.
 4. Surface labels for CLI, IDE, desktop, cloud, worktree, and ChatGPT Work.
-5. Links to the official OpenAI documentation whenever local guidance is a
-   summary, account-dependent, experimental, or likely to change.
+5. Links to the official OpenAI documentation whenever local guidance is asummary, account-dependent, experimental, or likely to change.
 
 ## Completed work
 
 ### Foundation and curriculum
 
 - [x] Define the English-only repository policy and Codex product boundaries.
-  - Evidence: [AGENTS.md](AGENTS.md), [STYLE_GUIDE.md](STYLE_GUIDE.md),
-    [README.md](README.md)
-  - Acceptance: no translation tree is part of the current curriculum; claims
-    identify the applicable Codex surface.
+  - Evidence: [AGENTS.md](AGENTS.md), [STYLE_GUIDE.md](STYLE_GUIDE.md), [README.md](README.md)
+  - Acceptance: no translation tree is part of the current curriculum; claims identify the applicable Codex surface.
 - [x] Build the ten-module learning sequence.
-  - Evidence: [LEARNING-ROADMAP.md](LEARNING-ROADMAP.md),
-    [INDEX.md](INDEX.md), [CATALOG.md](CATALOG.md)
-  - Acceptance: modules remain dependency-ordered from getting started through
-    CLI and automation.
+  - Evidence: [LEARNING-ROADMAP.md](LEARNING-ROADMAP.md), [INDEX.md](INDEX.md), [CATALOG.md](CATALOG.md)
+  - Acceptance: modules remain dependency-ordered from getting started through CLI and automation.
 - [x] Write Module 1 and Module 2 with first-task and `AGENTS.md` exercises.
   - Evidence: [01-getting-started/README.md](01-getting-started/README.md),
     [02-agents-md/README.md](02-agents-md/README.md)
@@ -120,8 +106,13 @@ Make Codex approachable for learners at different levels by providing:
   skills, plugins, tests, builds, and release exclusions.
   - Evidence: [scripts/quality_gate.py](scripts/quality_gate.py),
     [release-tool tests](scripts/tests/test_release_tools.py)
-  - Latest verified result: 44 Markdown files, nine Mermaid blocks, 14 release
+  - Latest verified result: 44 Markdown files, 13 Mermaid blocks, 15 release
     tests, five hook tests, and three plugin tests pass.
+- [x] Clarify the Module 2 hands-on exercise with an isolated practice repo,
+  ordered steps, expected observations, learning outcomes, and cleanup.
+  - Evidence: [Module 2](02-agents-md/README.md)
+  - Acceptance: learners can reproduce root and nested instruction discovery
+    without accidentally inheriting a parent project's guidance.
 - [x] Add a linked glossary for AI, Codex, safety, and file-format terminology.
   - Evidence: [GLOSSARY.md](GLOSSARY.md), [Complete index](INDEX.md)
   - Acceptance: key terms and abbreviations link to a local lesson and an

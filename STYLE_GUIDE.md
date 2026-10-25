@@ -1,7 +1,6 @@
 # Style guide
 
-Use these conventions to keep Codex How To consistent, testable, and easy to
-navigate.
+Use these conventions to keep Codex How To consistent, testable, and easy to navigate.
 
 ## Language
 
@@ -15,8 +14,7 @@ navigate.
 - Use two-digit numbered prefixes for curriculum modules.
 - Use lowercase kebab-case for ordinary files and directories.
 - Use conventional uppercase names for root project documents.
-- Use canonical Codex paths exactly, including `.agents`, `.codex`, and
-  `.codex-plugin`.
+- Use canonical Codex paths exactly, including `.agents`, `.codex`, and `.codex-plugin`.
 
 ## Lesson structure
 
@@ -46,8 +44,7 @@ Completed module READMEs should follow this order:
 
 - Always declare a language on fenced code blocks.
 - Make examples safe by default.
-- Use placeholders such as `YOUR_TOKEN` only when an environment variable
-  example is not clearer.
+- Use placeholders such as `YOUR_TOKEN` only when an environment variable example is not clearer.
 - Never include real credentials, personal paths, or account identifiers.
 - Explain commands that change external state.
 - Include expected output or a verification command when practical.
@@ -62,8 +59,7 @@ Label instructions when behavior is specific to:
 - Codex cloud execution
 - ChatGPT Work
 
-Do not combine instructions from different surfaces into a single unlabeled
-procedure.
+Do not combine instructions from different surfaces into a single unlabeled procedure.
 
 ## Links and sources
 
@@ -75,8 +71,7 @@ procedure.
 
 ## Mermaid diagrams
 
-- Use diagrams only when they make sequence, ownership, hierarchy, or branching
-  materially clearer.
+- Use diagrams only when they make sequence, ownership, hierarchy, or branching materially clearer.
 - Keep labels short and avoid embedding large code fragments.
 - Declare Mermaid fences with `mermaid`.
 - Validate diagrams before merging.
@@ -91,8 +86,7 @@ procedure.
 
 ## Commit messages
 
-When commits are requested, use `type(scope): subject`. Prefer the module
-directory as the scope, for example `docs(skills): add invocation exercise`.
+When commits are requested, use `type(scope): subject`. Prefer the module directory as the scope, for example `docs(skills): add invocation exercise`.
 
 ## Author checklist
 

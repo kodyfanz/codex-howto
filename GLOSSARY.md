@@ -1,8 +1,6 @@
 # Codex and AI glossary
 
-Use this page as a fast lookup while reading the curriculum. Each entry links
-to the lesson that demonstrates the concept and, where useful, to an official
-reference that can change independently of this guide.
+Use this page as a fast lookup while reading the curriculum. Each entry links to the lesson that demonstrates the concept and, where useful, to an official reference that can change independently of this guide.
 
 ## AI and language-model terms
 
@@ -63,7 +61,4 @@ reference that can change independently of this guide.
 
 ## How to use this page
 
-Start with the linked local lesson when you need a practical example. Follow
-the official reference when a term is surface-specific, account-dependent, or
-likely to change. If a term is missing, add it here with a concise definition,
-a local lesson link, and an official reference where one exists.
+Start with the linked local lesson when you need a practical example. Follow the official reference when a term is surface-specific, account-dependent, or likely to change. If a term is missing, add it here with a concise definition, a local lesson link, and an official reference where one exists.
