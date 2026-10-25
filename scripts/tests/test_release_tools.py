@@ -153,6 +153,13 @@ class BuildTests(unittest.TestCase):
                 self.assertNotIn(marker, content)
             self.assertNotIn(b"\x00", content)
 
+    def test_website_code_blocks_have_copy_controls(self) -> None:
+        pages = list(self.site.rglob("*.html"))
+        self.assertTrue(any(b'class="copy-code"' in page.read_bytes() for page in pages))
+        with zipfile.ZipFile(self.epub) as archive:
+            xhtml = [archive.read(name) for name in archive.namelist() if name.endswith(".xhtml")]
+            self.assertFalse(any(b'class="copy-code"' in content for content in xhtml))
+
     def test_website_contains_rendered_diagrams_and_source_fallbacks(self) -> None:
         rendered = [page for page in self.site.rglob("*.html") if b'class="mermaid-diagram"' in page.read_bytes()]
         self.assertEqual(len(rendered), 9)

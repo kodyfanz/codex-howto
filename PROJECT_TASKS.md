@@ -118,6 +118,11 @@ Make Codex approachable for learners at different levels by providing:
     [website styles](scripts/website_templates/site.css)
   - Acceptance: common strings, comments, numbers, and keywords render with
     semantic color classes in the website and EPUB without a CDN dependency.
+- [x] Add one-click copy controls to website code blocks.
+  - Evidence: [website script](scripts/website_templates/site.js),
+    [Markdown renderer](scripts/doc_utils.py)
+  - Acceptance: each website code block exposes an accessible Copy button with
+    a clipboard fallback; EPUB output remains free of interactive controls.
 - [x] Add a linked glossary for AI, Codex, safety, and file-format terminology.
   - Evidence: [GLOSSARY.md](GLOSSARY.md), [Complete index](INDEX.md)
   - Acceptance: key terms and abbreviations link to a local lesson and an
