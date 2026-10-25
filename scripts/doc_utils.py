@@ -372,7 +372,7 @@ def render_markdown(
             else:
                 escaped = highlight_code("\n".join(code_lines), code_language)
                 language = html.escape(code_language, quote=True)
-                copy_button = "" if epub else '<button class="copy-code" type="button" aria-label="Copy code">Copy</button>'
+                copy_button = "" if epub else '<button class="copy-code" type="button" aria-label="Copy code"><span class="copy-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 8V5.5A1.5 1.5 0 0 1 10.5 4h8A1.5 1.5 0 0 1 20 5.5v8a1.5 1.5 0 0 1-1.5 1.5H16M5.5 8h8A1.5 1.5 0 0 1 15 9.5v9A1.5 1.5 0 0 1 13.5 20h-8A1.5 1.5 0 0 1 4 18.5v-9A1.5 1.5 0 0 1 5.5 8Z"/></svg></span><span class="sr-only">Copy code</span></button>'
                 if code_language == "mermaid" and mermaid_callback is not None:
                     diagram_href = html.escape(mermaid_callback("\n".join(code_lines), index), quote=True)
                     image = f'<img src="{diagram_href}" alt="Mermaid flowchart" />' if epub else f'<img src="{diagram_href}" alt="Mermaid flowchart">'
