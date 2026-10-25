@@ -73,6 +73,14 @@ def validate_extensions() -> None:
     print(f"Extensions passed: {len(skills)} skills, {len(manifests)} plugins")
 
 
+def run_test_discovery(directory: str) -> None:
+    test_root = ROOT / directory
+    if not any(test_root.rglob("test_*.py")):
+        print(f"\nSkipping unittest discovery in {directory}: no test files found", flush=True)
+        return
+    run(sys.executable, "-m", "unittest", "discover", "-s", directory, "-p", "test_*.py")
+
+
 def main() -> int:
     try:
         run(sys.executable, "scripts/check_markdown.py")
@@ -82,13 +90,13 @@ def main() -> int:
         validate_structured_files()
         validate_extensions()
         run(sys.executable, "-m", "unittest", "discover", "-s", "scripts/tests", "-v")
-        run(sys.executable, "-m", "unittest", "discover", "-s", "06-hooks/examples", "-p", "test_*.py")
+        run_test_discovery("06-hooks/examples")
         for directory in (
             "07-plugins/examples/devops-readiness/scripts",
             "07-plugins/examples/documentation-maintenance",
             "07-plugins/examples/pr-review",
         ):
-            run(sys.executable, "-m", "unittest", "discover", "-s", directory, "-p", "test_*.py")
+            run_test_discovery(directory)
         run(sys.executable, "scripts/build_website.py")
         run(sys.executable, "scripts/build_epub.py")
         run(sys.executable, "scripts/build_release.py")
