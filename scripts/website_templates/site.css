@@ -72,6 +72,8 @@ blockquote p { margin: 0; }
 code { background: color-mix(in srgb, var(--accent-soft) 78%, var(--paper)); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 16%, transparent); border-radius: 5px; padding: .12em .38em; font-family: "SFMono-Regular", Consolas, monospace; font-size: .9em; }
 pre { position: relative; max-width: 100%; overflow-x: auto; margin: 1.35rem 0; padding: 2.7rem 1.35rem 1.35rem; background: linear-gradient(135deg, color-mix(in srgb, var(--code) 96%, #163d32), var(--code)); color: var(--code-ink); border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent); border-radius: 10px; box-shadow: 0 12px 28px rgba(9, 16, 13, .18); line-height: 1.58; }
 pre::before { content: attr(data-language); position: absolute; top: 0; left: 0; right: 0; padding: .45rem 1.35rem; color: color-mix(in srgb, var(--code-ink) 70%, var(--accent)); background: color-mix(in srgb, var(--code) 78%, #1b5b4a); border-bottom: 1px solid color-mix(in srgb, var(--accent) 32%, transparent); font: 700 .7rem/1.2 Inter, ui-sans-serif, system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+.copy-code { position: absolute; top: .32rem; right: .55rem; z-index: 1; border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--code-ink)); border-radius: 5px; padding: .25rem .6rem; background: color-mix(in srgb, var(--code) 55%, #1b5b4a); color: var(--code-ink); font: 700 .72rem/1.2 Inter, ui-sans-serif, system-ui, sans-serif; cursor: pointer; }
+.copy-code:hover, .copy-code:focus-visible { background: var(--accent); color: var(--paper); outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 2px; }
 pre code { display: block; background: transparent; border: 0; padding: 0; color: inherit; }
 .syntax-comment { color: #91a89d; font-style: italic; }
 .syntax-string { color: #f4c27a; }
@@ -113,6 +115,7 @@ article img { max-width: 100%; height: auto; }
 
 @media print {
   .topbar, .sidebar, .pager, .skip-link { display: none; }
+  .copy-code { display: none; }
   .shell { display: block; }
   .content { width: 100%; margin: 0; border: 0; box-shadow: none; padding: 0; }
 }

@@ -372,13 +372,14 @@ def render_markdown(
             else:
                 escaped = highlight_code("\n".join(code_lines), code_language)
                 language = html.escape(code_language, quote=True)
+                copy_button = "" if epub else '<button class="copy-code" type="button" aria-label="Copy code">Copy</button>'
                 if code_language == "mermaid" and mermaid_callback is not None:
                     diagram_href = html.escape(mermaid_callback("\n".join(code_lines), index), quote=True)
                     image = f'<img src="{diagram_href}" alt="Mermaid flowchart" />' if epub else f'<img src="{diagram_href}" alt="Mermaid flowchart">'
-                    output.append(f'<figure class="mermaid-diagram">{image}<figcaption>Rendered Mermaid diagram</figcaption><details><summary>Mermaid source</summary><pre class="language-mermaid" data-language="mermaid"><code>{escaped}</code></pre></details></figure>')
+                    output.append(f'<figure class="mermaid-diagram">{image}<figcaption>Rendered Mermaid diagram</figcaption><details><summary>Mermaid source</summary><pre class="language-mermaid" data-language="mermaid">{copy_button}<code>{escaped}</code></pre></details></figure>')
                 else:
                     css_class = "mermaid" if code_language == "mermaid" else f"language-{language}"
-                    output.append(f'<pre class="{css_class}" data-language="{language}"><code>{escaped}</code></pre>')
+                    output.append(f'<pre class="{css_class}" data-language="{language}">{copy_button}<code>{escaped}</code></pre>')
                 in_code = False
             index += 1
             continue
