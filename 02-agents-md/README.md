@@ -81,42 +81,83 @@ Avoid:
 
 Pair guidance with CI, linters, type checkers, and tests. `AGENTS.md` explains what matters; deterministic tooling enforces what can be checked mechanically.
 
-## Create a project instruction file
+## Hands-on exercise: layered guidance
 
-### Step 1 — Create an isolated practice repository
+Follow these steps in order. The first directory you enter is the tutorial
+checkout, and the first directory in which you run Codex is the disposable
+practice project. Do not run `/init` before entering that practice project.
 
-Run this from the Codex How To repository root so the template paths resolve:
+### Step 0 — Enter the tutorial checkout
+
+Use the real path to this checkout. This gives the shell an explicit source for
+the copy-ready templates and prevents relative paths from becoming ambiguous.
+
+```bash
+cd /path/to/codex-howto
+TUTORIAL_ROOT="$PWD"
+```
+
+### Step 1 — Create an isolated practice project
+
+Create a fresh Git root outside this checkout. Do not place it inside another
+repository, monorepo, or directory tree that already has a project-level
+`AGENTS.md`.
 
 ```bash
 PRACTICE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/codex-agents-practice.XXXXXX")"
 git init -q "$PRACTICE_ROOT"
-mkdir -p "$PRACTICE_ROOT/services/example"
 printf '%s\n' '# Disposable Codex instructions practice' > "$PRACTICE_ROOT/README.md"
-printf 'Practice repository: %s\n' "$PRACTICE_ROOT"
+printf 'Practice project: %s\n' "$PRACTICE_ROOT"
+test "$(git -C "$PRACTICE_ROOT" rev-parse --show-toplevel)" = "$PRACTICE_ROOT"
+find "$PRACTICE_ROOT" \( -name 'AGENTS.md' -o -name 'AGENTS.override.md' \) -print
 ```
 
-The printed path is the only directory used in the exercise. Confirm that it
-is not the current project and that it has no inherited project root:
+The last command must print nothing. The fresh Git root ensures that the
+project-level discovery starts here; a global `~/.codex/AGENTS.md`, if present,
+is intentionally still part of the experiment.
+
+### Step 2 — Enter the practice project before using Codex
+
+This is the critical directory step. `/init` acts on the current project, so
+running it from `$TUTORIAL_ROOT` would modify the wrong repository.
 
 ```bash
-test "$PRACTICE_ROOT" != "$PWD"
-test "$(git -C "$PRACTICE_ROOT" rev-parse --show-toplevel)" = "$PRACTICE_ROOT"
-find "$PRACTICE_ROOT" -name 'AGENTS.md' -o -name 'AGENTS.override.md'
+cd "$PRACTICE_ROOT"
+pwd
+codex
 ```
 
-The final command should print nothing before you add the practice files. Do
-not skip this check: it makes the later observations attributable to the files
-you create in this exercise.
-
-### Step 2 — Add root guidance
-
-In the Codex CLI, `/init` can generate an initial scaffold in the current directory:
+Confirm that `pwd` prints `$PRACTICE_ROOT`. Only then type the slash command in
+the Codex session:
 
 ```text
 /init
 ```
 
-You can also create the file manually. A useful minimal structure is:
+Exit Codex after it creates the scaffold. If you prefer a fully manual file,
+skip `/init` and continue with the template option in Step 3; do not use both
+methods for the root file.
+
+### Step 3 — Finalize the root guidance
+
+Choose exactly one path:
+
+- **Generated path:** inspect the `AGENTS.md` created by `/init`, replace its
+  placeholders, and keep only commands you have verified in this practice
+  project.
+- **Template path:** return to the tutorial checkout and copy the template:
+
+  ```bash
+  cd "$TUTORIAL_ROOT"
+  cp 02-agents-md/project-AGENTS.md "$PRACTICE_ROOT/AGENTS.md"
+  ```
+
+If you choose the template path, replace every bracketed placeholder before
+continuing. The root file describes the whole practice project, not one service.
+If you choose the generated path, edit that generated file in place instead;
+do not overwrite it with the template afterward.
+
+The following is the minimum useful shape:
 
 ```markdown
 # AGENTS.md
@@ -144,20 +185,10 @@ You can also create the file manually. A useful minimal structure is:
 - Run `npm test` and `npm run typecheck` before handoff.
 ```
 
-Start with commands you have verified locally. Add rules when a repeated error, review comment, or navigation problem demonstrates a real need.
+Start with commands you have verified locally. Add rules when a repeated error,
+review comment, or navigation problem demonstrates a real need.
 
-Copy the ready-made project template into the isolated repository:
-
-```bash
-cp 02-agents-md/project-AGENTS.md "$PRACTICE_ROOT/AGENTS.md"
-```
-
-Read the file and replace every placeholder before asking Codex to use it. The
-root file should describe the whole repository, not a single service.
-
-## Add directory-specific guidance
-
-### Step 3 — Add a nested instruction file
+### Step 4 — Add directory-specific guidance
 
 Suppose a repository uses `npm test` generally, but the payment service has a separate command and stricter change rule:
 
@@ -181,9 +212,12 @@ The nested override can contain:
 
 When Codex starts in `services/payments`, it combines the global and root guidance with this more specific file.
 
-For this exercise, copy the nested template into the directory you created:
+Return to the tutorial checkout and copy the nested template into the directory
+you will create for this step:
 
 ```bash
+cd "$TUTORIAL_ROOT"
+mkdir -p "$PRACTICE_ROOT/services/example"
 cp 02-agents-md/nested-AGENTS.override.md \
   "$PRACTICE_ROOT/services/example/AGENTS.override.md"
 ```
@@ -198,14 +232,14 @@ file.
 - [Project AGENTS.md template](project-AGENTS.md)
 - [Nested AGENTS.override.md template](nested-AGENTS.override.md)
 
-The templates are copied in Steps 2 and 3. Edit every placeholder before
-relying on the files.
+The templates are used in Steps 3 and 4. Edit every placeholder before relying
+on the files.
 
 ## Verify active instructions
 
-### Step 4 — Verify the root scope
+### Step 5 — Verify the root scope
 
-Start a new CLI run from the repository root:
+Start a new CLI run at the practice project root:
 
 ```bash
 codex --cd "$PRACTICE_ROOT" --ask-for-approval never \
@@ -219,7 +253,8 @@ codex --cd "$PRACTICE_ROOT/services/example" --ask-for-approval never \
   "Summarize the instruction files you loaded and explain which test command applies here. Do not modify files."
 ```
 
-Expected result: the nested run reports the repository guidance plus the more specific service guidance, and selects the service's test command.
+Expected result: the nested run reports the repository guidance plus the more
+specific service guidance, and selects the service's test command.
 
 The root run should not report the nested service rule because its current
 directory is above `services/example`. The nested run should report both root
@@ -227,13 +262,6 @@ guidance and the more specific file. If both runs report an unexpected rule,
 stop and inspect parent directories and `~/.codex/` before continuing.
 
 `--ask-for-approval never` means a non-interactive run cannot request new approval; it does not grant extra access. These prompts are read-only by instruction, but the active sandbox still defines the actual execution boundary.
-
-## Hands-on exercise: layered guidance
-
-Complete the steps in order: create the isolated root, copy and edit the root
-template, add the nested override, run the two read-only checks, and compare the
-reported instruction chain with the files on disk. Do not run both checks in a
-single long-lived session; start a fresh CLI run after changing instructions.
 
 ### Expected result
 
@@ -252,7 +280,7 @@ directory, and identify when a parent or global file is affecting a result. You
 should also know that `AGENTS.md` guides Codex but does not replace tests,
 linters, permissions, or approval controls.
 
-### Cleanup
+### Step 6 — Clean up
 
 When you are done, remove only the disposable repository created for this
 exercise:
