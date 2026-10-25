@@ -17,6 +17,7 @@ from build_website import build_website  # noqa: E402
 from check_markdown import check_file as check_markdown_file  # noqa: E402
 from doc_utils import (  # noqa: E402
     collect_all_pages,
+    highlight_code,
     heading_to_anchor,
     headings,
     output_path,
@@ -92,6 +93,13 @@ class DocumentationUtilityTests(unittest.TestCase):
         self.assertIn("<svg", svg)
         self.assertIn("Start", svg)
         self.assertIn("marker-end", svg)
+
+    def test_code_highlighter_marks_common_tokens(self) -> None:
+        highlighted = highlight_code('if count > 1: return "ready" # check', "python")
+        self.assertIn('class="syntax-keyword">if</span>', highlighted)
+        self.assertIn('class="syntax-number">1</span>', highlighted)
+        self.assertIn('class="syntax-string">&quot;ready&quot;</span>', highlighted)
+        self.assertIn('class="syntax-comment"># check</span>', highlighted)
 
     def test_markdown_validator_rejects_unlabeled_fence(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

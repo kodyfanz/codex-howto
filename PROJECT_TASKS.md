@@ -113,6 +113,11 @@ Make Codex approachable for learners at different levels by providing:
   - Evidence: [Module 2](02-agents-md/README.md)
   - Acceptance: learners can reproduce root and nested instruction discovery
     without accidentally inheriting a parent project's guidance.
+- [x] Add dependency-free syntax highlighting to generated code examples.
+  - Evidence: [Markdown renderer](scripts/doc_utils.py),
+    [website styles](scripts/website_templates/site.css)
+  - Acceptance: common strings, comments, numbers, and keywords render with
+    semantic color classes in the website and EPUB without a CDN dependency.
 - [x] Add a linked glossary for AI, Codex, safety, and file-format terminology.
   - Evidence: [GLOSSARY.md](GLOSSARY.md), [Complete index](INDEX.md)
   - Acceptance: key terms and abbreviations link to a local lesson and an

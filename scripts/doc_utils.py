@@ -48,6 +48,23 @@ LINK_RE = re.compile(r"(?<!!)\[([^\]]+)\]\(([^)]+)\)")
 IMAGE_RE = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
 FENCE_RE = re.compile(r"^\s*```([^`]*)$")
+CODE_TOKEN_RE = re.compile(
+    r"(?P<comment>#[^\n]*|//[^\n]*|/\*[\s\S]*?\*/|<!--[\s\S]*?-->)"
+    r"|(?P<string>'(?:\\.|[^'\\])*'|\"(?:\\.|[^\"\\])*\"|`(?:\\.|[^`\\])*`)"
+    r"|(?P<number>\b(?:0x[\da-fA-F]+|\d+(?:\.\d+)?)\b)"
+)
+KEYWORDS = {
+    "bash": {"case", "do", "done", "else", "esac", "fi", "for", "function", "if", "in", "then", "while"},
+    "javascript": {"async", "await", "const", "else", "export", "function", "if", "import", "let", "new", "return", "throw", "try", "var"},
+    "json": {"false", "null", "true"},
+    "markdown": {"blockquote", "code", "heading", "link", "list"},
+    "mermaid": {"flowchart", "graph", "subgraph"},
+    "python": {"and", "class", "def", "elif", "else", "for", "from", "if", "import", "in", "is", "not", "or", "return", "try", "while", "with"},
+    "shell": {"case", "do", "done", "else", "esac", "fi", "for", "function", "if", "in", "then", "while"},
+    "toml": {"false", "true"},
+    "typescript": {"async", "await", "const", "else", "export", "function", "if", "import", "interface", "let", "new", "return", "throw", "try", "type", "var"},
+    "yaml": {"false", "null", "true"},
+}
 
 
 @dataclass(frozen=True)
@@ -90,6 +107,29 @@ def title_from_markdown(content: str, fallback: str) -> str:
         if match:
             return re.sub(r"[`*_]", "", match.group(1)).strip()
     return fallback
+
+
+def highlight_code(code: str, language: str) -> str:
+    """Apply dependency-free syntax highlighting to common code fences."""
+    normalized = language.lower().split("-")[0]
+    keywords = KEYWORDS.get(normalized, set())
+
+    def highlight_plain(value: str) -> str:
+        escaped = html.escape(value)
+        if not keywords:
+            return escaped
+        pattern = r"(?<![\w-])(" + "|".join(sorted(map(re.escape, keywords), key=len, reverse=True)) + r")(?![\w-])"
+        return re.sub(pattern, r'<span class="syntax-keyword">\1</span>', escaped)
+
+    output: list[str] = []
+    cursor = 0
+    for match in CODE_TOKEN_RE.finditer(code):
+        output.append(highlight_plain(code[cursor:match.start()]))
+        category = match.lastgroup or "string"
+        output.append(f'<span class="syntax-{category}">{html.escape(match.group())}</span>')
+        cursor = match.end()
+    output.append(highlight_plain(code[cursor:]))
+    return "".join(output)
 
 
 def collect_pages(root: Path, suffix: str = ".html") -> list[Page]:
@@ -330,15 +370,15 @@ def render_markdown(
                 code_language = fence.group(1).strip().split()[0] if fence.group(1).strip() else "text"
                 code_lines = []
             else:
-                escaped = html.escape("\n".join(code_lines))
+                escaped = highlight_code("\n".join(code_lines), code_language)
                 language = html.escape(code_language, quote=True)
                 if code_language == "mermaid" and mermaid_callback is not None:
                     diagram_href = html.escape(mermaid_callback("\n".join(code_lines), index), quote=True)
                     image = f'<img src="{diagram_href}" alt="Mermaid flowchart" />' if epub else f'<img src="{diagram_href}" alt="Mermaid flowchart">'
-                    output.append(f'<figure class="mermaid-diagram">{image}<figcaption>Rendered Mermaid diagram</figcaption><details><summary>Mermaid source</summary><pre><code>{escaped}</code></pre></details></figure>')
+                    output.append(f'<figure class="mermaid-diagram">{image}<figcaption>Rendered Mermaid diagram</figcaption><details><summary>Mermaid source</summary><pre class="language-mermaid" data-language="mermaid"><code>{escaped}</code></pre></details></figure>')
                 else:
                     css_class = "mermaid" if code_language == "mermaid" else f"language-{language}"
-                    output.append(f'<pre class="{css_class}"><code>{escaped}</code></pre>')
+                    output.append(f'<pre class="{css_class}" data-language="{language}"><code>{escaped}</code></pre>')
                 in_code = False
             index += 1
             continue

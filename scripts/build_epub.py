@@ -22,10 +22,15 @@ body { color: #17211c; font-family: sans-serif; line-height: 1.55; margin: 5%; }
 h1, h2, h3, h4 { color: #075c4b; line-height: 1.2; }
 h1 { font-size: 2.2em; } h2 { border-top: 1px solid #c9d5cf; padding-top: .6em; }
 a { color: #075c4b; } img { max-width: 100%; height: auto; }
-code { font-family: monospace; background: #e8f1ed; padding: .08em .25em; }
-pre { background: #12221d; color: #e6f3ed; padding: 1em; white-space: pre-wrap; }
-pre code { background: transparent; padding: 0; }
-blockquote { border-left: .25em solid #16836d; margin-left: 0; padding-left: 1em; }
+code { font-family: monospace; color: #075c4b; background: #e8f1ed; border: 1px solid #c9d5cf; border-radius: .2em; padding: .08em .25em; }
+pre { background: #12221d; color: #e6f3ed; border: 1px solid #2e6b5b; border-radius: .35em; padding: 2.2em 1em 1em; white-space: pre-wrap; }
+pre::before { content: attr(data-language); display: block; margin: -1.6em -0.5em .8em; padding: .35em .5em; color: #9fe3cb; border-bottom: 1px solid #2e6b5b; font: bold .7em sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+pre code { background: transparent; border: 0; padding: 0; color: inherit; }
+.syntax-comment { color: #91a89d; font-style: italic; }
+.syntax-string { color: #f4c27a; }
+.syntax-number { color: #9ed8ff; }
+.syntax-keyword { color: #85d7c0; font-weight: bold; }
+blockquote { background: #eaf3ef; border-left: .25em solid #16836d; margin-left: 0; padding: .7em 1em .7em 1.25em; }
 table { border-collapse: collapse; width: 100%; font-size: .9em; }
 th, td { border: 1px solid #aab8b1; padding: .4em; text-align: left; vertical-align: top; }
 th { background: #d8ebe4; } .table-wrap { overflow-x: auto; }
