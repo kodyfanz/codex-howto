@@ -222,10 +222,7 @@ cp 02-agents-md/nested-AGENTS.override.md \
   "$PRACTICE_ROOT/services/example/AGENTS.override.md"
 ```
 
-Replace its placeholders and keep the nested rule genuinely specific to that
-directory. A nested file is useful when the service needs a different command,
-test fixture policy, or review rule; it is not a place to duplicate the root
-file.
+Replace its placeholders and keep the nested rule genuinely specific to that directory. A nested file is useful when the service needs a different command, test fixture policy, or review rule; it is not a place to duplicate the root file.
 
 ## Copy-ready templates
 

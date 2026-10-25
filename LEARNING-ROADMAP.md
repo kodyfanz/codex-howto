@@ -22,12 +22,12 @@ This nine-item checklist is a simple roadmap placement aid. It is not the eight-
 - [ ] Explain sandbox, approvals, rules, and worktrees.
 - [ ] Use `codex exec` or a Codex automation.
 
-| Checks completed | Suggested starting point                                                             | Primary goal                                                      |
-| ---------------: | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
+| Checks completed | Suggested starting point                                                              | Primary goal                                                      |
+| ---------------: | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
 |              0–2 | [Milestone 1: Safe daily use](#milestone-1-safe-daily-use)                           | Complete repository work and encode durable instructions          |
 |              3–4 | [Milestone 2: Reusable and delegated work](#milestone-2-reusable-and-delegated-work) | Package expertise and delegate bounded investigations             |
 |              5–7 | [Milestone 3: Connected automation](#milestone-3-connected-automation)               | Connect tools, enforce lifecycle checks, and distribute workflows |
-|              8–9 | [Milestone 4: Advanced operation](#milestone-4-advanced-operation)                     | Control authority, isolate changes, and automate reviewed work    |
+|              8–9 | [Milestone 4: Advanced operation](#milestone-4-advanced-operation)                   | Control authority, isolate changes, and automate reviewed work    |
 
 When unsure, start one module earlier and complete its hands-on outcome before moving forward.
 
@@ -93,7 +93,9 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    A[5. Connect MCP] --> B[6. Test a hook] --> C[7. Package a plugin]
+    A[5. Connect MCP]
+    A --> B[6. Test a hook]
+    B --> C[7. Package a plugin]
 ```
 
 #### Milestone 3 practice checkpoint
@@ -111,7 +113,9 @@ workflows](09-advanced-workflows/README.md) · [10. CLI and automation](10-cli-a
 
 ```mermaid
 flowchart LR
-    A[8. Set safety boundaries] --> B[9. Orchestrate durable work] --> C[10. Automate with CLI and CI]
+    A[8. Set safety boundaries]
+    A --> B[9. Orchestrate durable work]
+    B --> C[10. Automate with CLI and CI]
 ```
 
 #### Milestone 4 practice checkpoint

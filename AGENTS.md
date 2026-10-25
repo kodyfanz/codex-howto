@@ -28,6 +28,38 @@ This repository is a standalone tutorial project for Codex. Every claim, command
 - Label experimental, deprecated, surface-specific, or account-dependent behavior explicitly.
 - Prefer concise explanations followed by runnable examples and verification steps.
 
+## Lesson authoring contract
+
+Every hands-on lesson must be usable by a first-time learner without guessing
+the missing setup. Keep the following structure, adapted to the module's
+subject:
+
+- State the learning objective and prerequisites before the exercise.
+- Identify the exact starting directory and explain why it is the correct
+  scope. Say what learners must avoid, such as running in this checkout, a
+  nested repository, or a parent tree with an unrelated `AGENTS.md`.
+- Put steps in execution order. Each step must name the surface being used and
+  provide copy-ready commands or prompts with declared languages.
+- Include a small demonstration or read-only inspection before the first
+  change, so learners can confirm context and understand the purpose.
+- Specify the requested change, its file scope, and constraints. Do not leave a
+  standalone code block without explaining what to paste, where to run it, or
+  why it is needed.
+- Include independent verification commands, expected output or observable
+  results, success criteria, and the learning outcome. Learners should be able
+  to tell whether the exercise worked without trusting an agent summary.
+- Explain cleanup for disposable resources and identify any command that
+  changes external state. Preserve a safe default and never use a real secret,
+  account, or machine-specific path.
+
+When a module teaches a repository-scoped feature, prefer an isolated practice
+repository with an explicit root. Reuse the detailed sequence in Module 2 as
+the consistency model: enter the tutorial checkout, create or inspect the
+practice project, enter the practice project before starting Codex, perform the
+smallest meaningful action, review the diff, verify the result, and clean up.
+Future module revisions should keep this structure unless the feature itself
+requires a different workflow; explain the exception in the lesson.
+
 ## Workflow
 
 - Keep changes scoped to the current repository status and validate them with the release quality gate documented in `scripts/README.md`.
