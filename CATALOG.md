@@ -1,8 +1,6 @@
 # Codex feature catalog
 
-Use this catalog when you know the capability you need but not the module where
-it is taught. Availability can vary by client, account, workspace, and policy;
-the detailed lessons will label those constraints.
+Use this catalog when you know the capability you need but not the module where it is taught. Availability can vary by client, account, workspace, and policy; the detailed lessons will label those constraints.
 
 ## Core surfaces
 

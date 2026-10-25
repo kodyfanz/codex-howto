@@ -2,8 +2,7 @@
 
 ## Our commitment
 
-We are committed to a welcoming, harassment-free community for everyone,
-regardless of background, identity, experience, or personal characteristics.
+We are committed to a welcoming, harassment-free community for everyone, regardless of background, identity, experience, or personal characteristics.
 
 ## Expected behavior
 
@@ -24,16 +23,10 @@ regardless of background, identity, experience, or personal characteristics.
 
 ## Scope
 
-This code applies to repository discussions, issues, pull requests, project
-events, and public spaces where a participant represents the project.
+This code applies to repository discussions, issues, pull requests, project events, and public spaces where a participant represents the project.
 
 ## Enforcement
 
-Project maintainers may remove, edit, or reject contributions and comments that
-violate these standards. Serious or repeated violations may result in a
-temporary or permanent ban from project spaces.
+Project maintainers may remove, edit, or reject contributions and comments that violate these standards. Serious or repeated violations may result in a temporary or permanent ban from project spaces.
 
-Report conduct concerns privately to the project maintainers. Include relevant
-links or evidence, avoid unnecessary personal data, and state any immediate
-safety concern. Maintainers should acknowledge reports promptly, protect the
-reporter's confidentiality where possible, and document enforcement decisions.
+Report conduct concerns privately to the project maintainers. Include relevant links or evidence, avoid unnecessary personal data, and state any immediate safety concern. Maintainers should acknowledge reports promptly, protect the reporter's confidentiality where possible, and document enforcement decisions.

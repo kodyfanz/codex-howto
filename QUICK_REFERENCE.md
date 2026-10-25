@@ -1,8 +1,6 @@
 # Codex quick reference
 
-This page is a navigation and decision aid. Exact commands and configuration
-belong in their modules, where they can be verified and scoped to a product
-surface.
+This page is a navigation and decision aid. Exact commands and configuration belong in their modules, where they can be verified and scoped to a product surface.
 
 ## Put the instruction in the right place
 
@@ -43,26 +41,22 @@ surface.
 
 ## Useful CLI slash commands
 
-The available commands depend on your installed CLI version. Type `/` in the
-composer to inspect the commands available in your session.
+The available commands depend on your installed CLI version. Type `/` in the composer to inspect the commands available in your session.
 
-| Command | Use |
-|---|---|
-| `/status` | Check the active session and permission context. |
-| `/permissions` | Inspect or change the current permission mode. |
-| `/diff` | Review file changes. |
-| `/mention` | Attach a file or directory as context. |
-| `/plan` | Ask for a plan before a larger change. |
-| `/compact` | Summarize a long conversation. |
-| `/init` | Create an instruction-file scaffold. |
-| `/skills` | Browse or invoke available skills. |
-| `/new` | Start a fresh conversation in the CLI session. |
-| `/quit` | Exit the interactive CLI. |
+| Command        | Use                                              |
+| -------------- | ------------------------------------------------ |
+| `/status`      | Check the active session and permission context. |
+| `/permissions` | Inspect or change the current permission mode.   |
+| `/diff`        | Review file changes.                             |
+| `/mention`     | Attach a file or directory as context.           |
+| `/plan`        | Ask for a plan before a larger change.           |
+| `/compact`     | Summarize a long conversation.                   |
+| `/init`        | Create an instruction-file scaffold.             |
+| `/skills`      | Browse or invoke available skills.               |
+| `/new`         | Start a fresh conversation in the CLI session.   |
+| `/quit`        | Exit the interactive CLI.                        |
 
-For a first task, begin with [Module 1](01-getting-started/README.md); you only need
-the commands relevant to your chosen surface. See the [current official
-developer-command reference](https://learn.chatgpt.com/docs/developer-commands)
-for the latest command set and surface-specific details.
+For a first task, begin with [Module 1](01-getting-started/README.md); you only need the commands relevant to your chosen surface. See the [current official developer-command reference](https://learn.chatgpt.com/docs/developer-commands) for the latest command set and surface-specific details.
 
 ## Safety questions
 
