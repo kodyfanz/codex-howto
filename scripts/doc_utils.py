@@ -126,6 +126,10 @@ def highlight_code(code: str, language: str) -> str:
     for match in CODE_TOKEN_RE.finditer(code):
         output.append(highlight_plain(code[cursor:match.start()]))
         category = match.lastgroup or "string"
+        if normalized == "markdown" and category == "comment":
+            line_start = code.rfind("\n", 0, match.start()) + 1
+            if not code[line_start:match.start()].strip() and re.match(r"#{1,6}\s", match.group()):
+                category = "heading"
         output.append(f'<span class="syntax-{category}">{html.escape(match.group())}</span>')
         cursor = match.end()
     output.append(highlight_plain(code[cursor:]))

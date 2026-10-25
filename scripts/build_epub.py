@@ -30,6 +30,7 @@ pre code { background: transparent; border: 0; padding: 0; color: inherit; }
 .syntax-string { color: #f4c27a; }
 .syntax-number { color: #9ed8ff; }
 .syntax-keyword { color: #85d7c0; font-weight: bold; }
+.syntax-heading { color: #85d7c0; font-weight: bold; font-style: normal; }
 blockquote { background: #eaf3ef; border-left: .25em solid #16836d; margin-left: 0; padding: .7em 1em .7em 1.25em; }
 table { border-collapse: collapse; width: 100%; font-size: .9em; }
 th, td { border: 1px solid #aab8b1; padding: .4em; text-align: left; vertical-align: top; }

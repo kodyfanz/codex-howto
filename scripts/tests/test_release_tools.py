@@ -101,6 +101,9 @@ class DocumentationUtilityTests(unittest.TestCase):
         self.assertIn('class="syntax-string">&quot;ready&quot;</span>', highlighted)
         self.assertIn('class="syntax-comment"># check</span>', highlighted)
 
+        markdown = highlight_code("# Code heading\n\nparagraph", "markdown")
+        self.assertIn('class="syntax-heading"># Code heading</span>', markdown)
+
     def test_markdown_validator_rejects_unlabeled_fence(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "README.md"
