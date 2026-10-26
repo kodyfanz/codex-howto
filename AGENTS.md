@@ -14,8 +14,13 @@ This repository is a standalone tutorial project for Codex. Every claim, command
 
 - Keep numbered tutorial modules in learning order.
 - Each module contains a `README.md` plus copy-ready examples where useful.
+- Treat placeholder-bearing files in `examples/` as reusable source templates,
+  not as the completed learner output; the lesson must show the concrete
+  practice content separately.
 - Use `.agents/skills/` for project skills and `.codex/agents/` for project custom-agent definitions.
 - Use `.codex/config.toml` and Codex hook configuration formats for project configuration examples.
+- Never edit `site/` or `dist/` as curriculum sources; rebuild them from the
+  authored files with the release tooling.
 - Update the root index and learning roadmap whenever a module is added or its position changes.
 
 ## Documentation rules
@@ -45,6 +50,15 @@ subject:
 - Specify the requested change, its file scope, and constraints. Do not leave a
   standalone code block without explaining what to paste, where to run it, or
   why it is needed.
+- Keep files in a module's example directories as reusable templates with
+  placeholders when they are intended for real repositories. Put the
+  placeholder-free, practice-specific version directly in the lesson so a
+  learner can copy it and complete the exercise without inventing values.
+- Explain the exact destination path and filename for every practice file. A
+  learner may create it with an editor they know or with `nano`; the lesson
+  should not require a particular editor. State that the placeholder template
+  is the basic starting point for a real repository, where paths, commands, and
+  rules must be replaced with verified project-specific facts.
 - Include independent verification commands, expected output or observable
   results, success criteria, and the learning outcome. Learners should be able
   to tell whether the exercise worked without trusting an agent summary.
@@ -62,7 +76,9 @@ requires a different workflow; explain the exception in the lesson.
 
 ## Workflow
 
-- Keep changes scoped to the current repository status and validate them with the release quality gate documented in `scripts/README.md`.
-- Preserve unrelated user changes.
+- Keep changes scoped to the current repository status and preserve unrelated
+  user changes.
+- Run focused checks while editing and the release quality gate documented in
+  `scripts/README.md` before handoff.
 - Do not commit or push unless the user explicitly requests it.
 - Run the relevant documentation checks after each completed phase once the validation toolchain has been ported.

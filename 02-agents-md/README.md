@@ -119,7 +119,10 @@ is intentionally still part of the experiment.
 ### Step 2 — Enter the practice project before using Codex
 
 This is the critical directory step. `/init` acts on the current project, so
-running it from `$TUTORIAL_ROOT` would modify the wrong repository.
+running it from `$TUTORIAL_ROOT` would modify the wrong repository. In this
+exercise, `README.md` was created in Step 1; `/init` reads that project context
+and creates an `AGENTS.md` scaffold. Do not assume `/init` creates a README in
+every repository.
 
 ```bash
 cd "$PRACTICE_ROOT"
@@ -134,103 +137,110 @@ the Codex session:
 /init
 ```
 
-Exit Codex after it creates the scaffold. If you prefer a fully manual file,
-skip `/init` and continue with the template option in Step 3; do not use both
-methods for the root file.
+Exit Codex after it creates the scaffold. If you prefer not to use `/init`, skip
+it and create the same root file manually in Step 3.
 
 ### Step 3 — Finalize the root guidance
 
-Choose exactly one path:
+Goal: finish one accurate root `AGENTS.md`. The file may be created by `/init`
+or by an editor you already know; the learning result is the same.
 
-- **Generated path:** inspect the `AGENTS.md` created by `/init`, replace its
-  placeholders, and keep only commands you have verified in this practice
-  project.
-- **Template path:** return to the tutorial checkout and copy the template:
+If `/init` created the file, replace its content with the supplied root
+template. If you skipped `/init`, create the file at this exact location and
+name:
 
-  ```bash
-  cd "$TUTORIAL_ROOT"
-  cp 02-agents-md/project-AGENTS.md "$PRACTICE_ROOT/AGENTS.md"
-  ```
+```bash
+nano "$PRACTICE_ROOT/AGENTS.md"
+```
 
-If you choose the template path, replace every bracketed placeholder before
-continuing. The root file describes the whole practice project, not one service.
-If you choose the generated path, edit that generated file in place instead;
-do not overwrite it with the template afterward.
-
-The following is the minimum useful shape:
+You may use another editor instead. Replace the file's content with this
+copy-ready version for the practice repository:
 
 ```markdown
 # AGENTS.md
 
 ## Repository map
 
-- `src/` contains application code.
-- `tests/` mirrors the source tree.
+- `README.md` explains this disposable practice project.
+- `services/example/` contains the nested-scope example used in this exercise.
 
 ## Commands
 
-- Install: `npm install`
-- Test: `npm test`
-- Type-check: `npm run typecheck`
+- No install or build command is required for this practice repository.
+- Verification: `git diff --check`
 
 ## Working agreements
 
-- Preserve public API compatibility unless the task explicitly changes it.
+- Keep changes limited to the requested files.
 - Keep unrelated files untouched.
+- Do not add secrets, personal paths, or unverified commands.
 - Add or update tests when behavior changes.
 
 ## Completion
 
-- Run the narrowest relevant test during iteration.
-- Run `npm test` and `npm run typecheck` before handoff.
+- Run `git diff --check` before reporting completion.
+- Report any check that could not run and why.
 ```
 
-Start with commands you have verified locally. Add rules when a repeated error,
-review comment, or navigation problem demonstrates a real need.
+In a real repository, use this as the basic starting point, then replace its
+paths and commands with verified facts from that repository.
+
+Save the file, then inspect it from the project root:
+
+```bash
+cd "$PRACTICE_ROOT"
+sed -n '1,160p' AGENTS.md
+```
+
+This controlled content keeps the exercise focused on instruction discovery and
+scope, rather than on inventing application commands.
 
 ### Step 4 — Add directory-specific guidance
 
-Suppose a repository uses `npm test` generally, but the payment service has a separate command and stricter change rule:
+Create a nested instruction file below the project root. This file should add a
+rule that is meaningful only inside `services/example/`:
 
 ```text
 repository/
 ├── AGENTS.md
 └── services/
-    └── payments/
+    └── example/
         └── AGENTS.override.md
 ```
 
-The nested override can contain:
+When Codex starts in `services/example`, it combines the root guidance with
+this more specific file.
 
-```markdown
-# Payments service instructions
-
-- Run `make test-payments` instead of the repository-wide test command.
-- Never change payment-event schemas without a migration and compatibility test.
-- Treat test fixtures as synthetic; never copy production transaction data.
-```
-
-When Codex starts in `services/payments`, it combines the global and root guidance with this more specific file.
-
-Return to the tutorial checkout and copy the nested template into the directory
-you will create for this step:
+Create the directory and file:
 
 ```bash
-cd "$TUTORIAL_ROOT"
 mkdir -p "$PRACTICE_ROOT/services/example"
-cp 02-agents-md/nested-AGENTS.override.md \
-  "$PRACTICE_ROOT/services/example/AGENTS.override.md"
+nano "$PRACTICE_ROOT/services/example/AGENTS.override.md"
 ```
 
-Replace its placeholders and keep the nested rule genuinely specific to that directory. A nested file is useful when the service needs a different command, test fixture policy, or review rule; it is not a place to duplicate the root file.
+Save the file and exit the editor, then replace its content with this
+copy-ready version:
+
+```markdown
+# Directory-specific instructions
+
+- This directory owns the nested-scope example used to demonstrate instruction precedence.
+- Keep changes inside `services/example/` unless the task explicitly requires another path.
+- Do not add secrets, personal paths, or generated files.
+- Before handoff, run `git -C services/example diff --check` from the repository root.
+```
+
+In a real repository, replace its paths and commands with verified local facts.
+Keep nested rules specific to that directory; do not duplicate the root file.
 
 ## Copy-ready templates
 
 - [Project AGENTS.md template](project-AGENTS.md)
 - [Nested AGENTS.override.md template](nested-AGENTS.override.md)
 
-The templates are used in Steps 3 and 4. Edit every placeholder before relying
-on the files.
+The linked files retain placeholders as reusable templates. The two blocks
+above are the completed practice versions. Use them as a basic starting point,
+then customize them for the real repository where you use them.
 
 ## Verify active instructions
 
@@ -247,11 +257,12 @@ Then verify the nested scope:
 
 ```bash
 codex --cd "$PRACTICE_ROOT/services/example" --ask-for-approval never \
-  "Summarize the instruction files you loaded and explain which test command applies here. Do not modify files."
+  "Summarize the instruction files you loaded and explain which nested rule applies here. Do not modify files."
 ```
 
 Expected result: the nested run reports the repository guidance plus the more
-specific service guidance, and selects the service's test command.
+specific directory guidance, including its directory-specific verification
+command.
 
 The root run should not report the nested service rule because its current
 directory is above `services/example`. The nested run should report both root
@@ -266,7 +277,7 @@ stop and inspect parent directories and `~/.codex/` before continuing.
 |---|---|---|
 | Root run from `$PRACTICE_ROOT` | Global guidance (if any) plus root guidance | Project-wide instructions apply at the project root |
 | Nested run from `services/example` | Root guidance plus the nested, more specific guidance | Later directory guidance is included for that subtree |
-| Verification command selection | Root command at the root; service command below the nested directory | Scope-specific workflow rules are discoverable |
+| Verification command selection | Repository check at the root; directory-specific check below `services/example` | Scope-specific workflow rules are discoverable |
 | Safety review | No secrets, personal paths, or copied documentation in either file | Guidance stays concise and safe to share |
 
 ### Learning outcome

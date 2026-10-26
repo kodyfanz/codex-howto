@@ -244,10 +244,70 @@ page and directories yourself.
 
 ### Step 2 — Create a durable execution plan
 
-Copy the template into the practice project, then inspect its sections:
+`examples/PLANS.md` is a reusable template for a real repository. It keeps
+generic fields such as scope, evidence, verification, and recovery as prompts
+for the author to replace. For this exercise, create the already-completed
+practice plan below at the exact path
+`$PRACTICE_ROOT/plans/ui-docs-workflow.md`. You may use `nano` or another
+editor; the exercise should not require a particular editor.
 
 ```bash
-cp 09-advanced-workflows/examples/PLANS.md "$PRACTICE_ROOT/plans/ui-docs-workflow.md"
+cat > "$PRACTICE_ROOT/plans/ui-docs-workflow.md" <<'EOF'
+# UI and documentation workflow
+
+## Goal
+
+Add one visible status line to `index.html`, verify the page locally, and
+prepare a read-only weekly documentation-drift report.
+
+## Scope and non-goals
+
+- In scope: `index.html`, `docs/`, `plans/`, and `prompts/`.
+- Out of scope: dependencies, deployment, publishing, notifications, and
+  changes to Git history.
+
+## Current evidence
+
+- `index.html` contains the baseline `Practice page` heading.
+- `docs/README.md` contains the baseline documentation.
+- `python3 -m http.server` is available for a local check.
+- Local browser access is available only from the local environment.
+
+## Proposed approach
+
+1. Add a short status line to `index.html`.
+2. Serve the practice project locally and verify the response and rendered page.
+3. Prepare a read-only prompt that checks only `docs/`.
+
+## Progress
+
+- [ ] Add the status line.
+- [ ] Verify the local page and stop the server.
+- [ ] Review the recurring prompt and final diff.
+
+## Verification
+
+- `curl --fail --silent http://127.0.0.1:8000/` contains `Practice page` and
+  the new status line.
+- `git diff --check` exits successfully.
+- The prompt has explicit no-change and incomplete-check results.
+
+## Risks and recovery
+
+- Do not start a server without recording its PID and stopping that exact PID.
+- Do not schedule, publish, deploy, or send notifications during this exercise.
+- Revert the local edit if the diff exceeds the stated scope.
+
+## Decisions and discoveries
+
+- The local environment owns UI verification because the page is served locally.
+- Cloud is not selected because local browser access and sign-in do not transfer.
+
+## Handoff
+
+The current Codex session owns integration. Report changed files, checks run,
+remaining uncertainty, stopped processes, and any approval still required.
+EOF
 cd "$PRACTICE_ROOT"
 sed -n '1,220p' plans/ui-docs-workflow.md
 ```
@@ -324,25 +384,40 @@ running after verification.
 
 ### Step 5 — Prepare, but do not schedule, the recurring report
 
-Copy the safe prompt example and adapt it to this repository:
+`examples/scheduled-doc-check.md` is the reusable read-only template for a
+real repository. For this exercise, create the concrete practice prompt below
+at `$PRACTICE_ROOT/prompts/weekly-doc-check.md`. It is ready to copy and is
+already scoped to this project's `docs/` directory:
 
 ```bash
-cp "$TUTORIAL_ROOT/09-advanced-workflows/examples/scheduled-doc-check.md" \
-  "$PRACTICE_ROOT/prompts/weekly-doc-check.md"
+cat > "$PRACTICE_ROOT/prompts/weekly-doc-check.md" <<'EOF'
+# Weekly documentation drift check
+
+Inspect only the `docs/` directory in this practice repository without
+modifying files or external systems.
+
+Compare user-facing documentation with the repository's code, configuration,
+tests, and command help when the relevant source state is available. Report
+only claims that are demonstrably stale, missing, or contradictory.
+
+For each finding, include the documentation file and heading, conflicting
+source evidence, user impact, and a concise suggested correction.
+
+If no actionable drift is found, return `No actionable documentation drift`
+and list the checks performed. If required source state is unavailable, return
+`Check incomplete`, explain what is missing, and do not infer a result.
+
+Do not edit files, open pull requests, post comments, send messages, change
+connections, publish, tag, deploy, or schedule anything. Stop and request
+human input if verification would require access outside the configured
+read-only environment.
+EOF
+sed -n '1,160p' "$PRACTICE_ROOT/prompts/weekly-doc-check.md"
 ```
 
-Edit the copied prompt so it states all of the following:
-
-- inspect only `docs/` and report changed or missing documentation;
-- return a clear no-change result when there is no drift;
-- report failures and missing evidence separately;
-- include direct file references and links where available;
-- never edit, publish, tag, deploy, or send notifications;
-- stop and ask for input when the repository or owner is unavailable.
-
-Do not create a schedule in this exercise. First test the adapted prompt
-manually in an ordinary read-only Codex session, then review the first several
-runs before scheduling it in a supported surface.
+Do not create a schedule in this exercise. First test this prompt manually in
+an ordinary read-only Codex session, then review the first several runs before
+scheduling it in a supported surface.
 
 ### Step 6 — Review authority, ownership, and evidence
 
