@@ -239,6 +239,19 @@ manual Git worktree. It never runs a destructive command or contacts a remote
 service. Follow the steps in order. The first directory in which you run Codex
 must be the practice repository or its dedicated worktree, not this checkout.
 
+### Prerequisites
+
+- Codex CLI installed and authenticated.
+- `git` and a POSIX shell available on the PATH.
+
+```bash
+codex --version
+git --version
+```
+
+If either command is unavailable, install it or stop before creating the
+practice repository; the exercise depends on both for its safety checks.
+
 ### Step 0 — Enter the tutorial checkout
 
 ```bash

@@ -205,6 +205,24 @@ needs repository research, a local UI check, and a weekly documentation-drift
 report. Follow the steps in order. The first directory in which you run Codex
 must be the practice repository, not this tutorial checkout.
 
+### Prerequisites
+
+- Codex CLI installed and authenticated.
+- Python 3, `curl`, `rg`, `git`, and a POSIX shell available on the PATH.
+- A browser is optional; the command-line HTTP check is the required proof.
+
+```bash
+codex --version
+python3 --version
+curl --version
+rg --version
+git --version
+```
+
+Install any missing command or skip the dependent verification step with the
+reason recorded; do not leave a background server running without completing
+the cleanup step.
+
 ### Step 0 — Enter the tutorial checkout
 
 ```bash

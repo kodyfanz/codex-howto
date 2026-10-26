@@ -73,7 +73,9 @@ codex mcp add context7 -- npx -y @upstash/context7-mcp
 
 The stdio example downloads and executes a third-party npm package. Review and
 pin third-party dependencies according to your organization's policy before
-using it in a trusted environment.
+using it in a trusted environment. Context7 can serve basic requests without a
+key; an API key is a separate Context7 credential used for authenticated access
+and higher limits. Codex does not create or supply that key automatically.
 
 Inspect configuration without exposing credentials:
 
@@ -95,9 +97,19 @@ for a trusted project-specific server. Do not paste them into `AGENTS.md`.
 [mcp_servers.context7]
 command = "npx"
 args = ["-y", "@upstash/context7-mcp"]
+# Optional: forward the key only when it exists in the process environment.
+env_vars = ["CONTEXT7_API_KEY"]
 startup_timeout_sec = 20
 tool_timeout_sec = 60
 ```
+
+If Context7 requires authentication for your account or workload, create the
+key in Context7, keep its value outside the repository, and export it before
+starting Codex. Do not put the literal key in `args`, `config.toml`, or a
+committed `.env` file. For example, enter it through a secret manager or a
+hidden prompt, then export it as `CONTEXT7_API_KEY`; the `env_vars` line above
+forwards the existing value to the child process. If no key is exported, the
+server may still start in anonymous mode with the provider's lower limits.
 
 Use `env_vars` to forward existing environment variables without placing their
 values in the file:
@@ -201,6 +213,23 @@ This exercise configures the OpenAI Docs MCP server for one disposable project
 and uses it for a read-only documentation lookup. Follow the steps in order.
 The first directory in which you run Codex must be the practice repository, not
 this tutorial checkout.
+
+### Prerequisites
+
+- Codex CLI installed and authenticated.
+- `git`, `rg`, and a POSIX shell available on the PATH.
+- Network access to `https://developers.openai.com/mcp` for the live MCP step.
+
+```bash
+codex --version
+git --version
+rg --version
+```
+
+If `rg` is unavailable, install it or replace the read-only scans with an
+equivalent such as `grep -n`. If network access or the MCP server is
+unavailable, continue with local configuration checks and record the live
+connection as skipped; do not weaken approval settings.
 
 ### Step 0 — Enter the tutorial checkout
 
