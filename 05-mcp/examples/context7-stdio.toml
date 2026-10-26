@@ -2,6 +2,8 @@
 [mcp_servers.context7]
 command = "npx"
 args = ["-y", "@upstash/context7-mcp"]
+# Optional; the value must be exported outside this file.
+env_vars = ["CONTEXT7_API_KEY"]
 startup_timeout_sec = 20
 tool_timeout_sec = 60
 enabled = true
