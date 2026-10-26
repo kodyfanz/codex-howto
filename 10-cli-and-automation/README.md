@@ -237,6 +237,24 @@ checks and failure-path test are always safe to perform. Follow the steps in
 order. The first directory in which you run Codex must be the practice
 repository, not this tutorial checkout.
 
+### Prerequisites
+
+- `bash`, Python 3, `git`, `rg`, and `jq` available on the PATH.
+- Codex CLI is required only for the CLI help check and optional authenticated
+  run; the static validation steps can run without authentication.
+
+```bash
+bash --version
+python3 --version
+git --version
+rg --version
+jq --version
+```
+
+If `jq` or `rg` is unavailable, install it or replace the corresponding
+read-only checks with an equivalent tool. Skip the authenticated run when
+Codex or credentials are unavailable; never put a key in the practice project.
+
 ### Step 0 — Enter the tutorial checkout
 
 ```bash

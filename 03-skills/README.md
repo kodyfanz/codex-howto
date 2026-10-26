@@ -213,6 +213,20 @@ This exercise creates a disposable project skill that summarizes an existing
 Git diff. Follow the steps in order. The first directory in which you run
 Codex must be the practice repository, not this tutorial checkout.
 
+### Prerequisites
+
+- Codex CLI installed and authenticated.
+- `git`, `rg`, and a POSIX shell available on the PATH.
+
+```bash
+codex --version
+git --version
+rg --version
+```
+
+If `rg` is unavailable, install it or replace the lesson's read-only searches
+with an equivalent tool such as `grep -n` before continuing.
+
 ### Step 0 — Enter the tutorial checkout
 
 ```bash

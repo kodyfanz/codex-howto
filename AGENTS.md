@@ -77,6 +77,12 @@ subject:
 - Include independent verification commands, expected output or observable
   results, success criteria, and the learning outcome. Learners should be able
   to tell whether the exercise worked without trusting an agent summary.
+- List every required external executable or service before the first example
+  that uses it, including tools such as `codex`, `rg`, `curl`, `jq`, `python3`,
+  or `npx`. Give a small version or availability check and either a supported
+  fallback or a clear instruction to stop/skip the dependent step when it is
+  unavailable. Never make a learner discover a missing prerequisite only from
+  `command not found`.
 - Explain cleanup for disposable resources and identify any command that
   changes external state. Preserve a safe default and never use a real secret,
   account, or machine-specific path.

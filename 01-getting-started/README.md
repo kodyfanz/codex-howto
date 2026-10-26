@@ -174,11 +174,22 @@ Enter this in Codex's prompt, not as a terminal command. For the full steps and 
 - Codex CLI installed and authenticated, or an IDE/desktop session ready.
 - A disposable Git repository created outside this checkout and outside any
   parent directory that already contains a project-level `AGENTS.md`.
-- A terminal available for independent diff and verification commands.
+- A terminal with `git` and `rg` available for independent diff and
+  verification commands.
 
 > **CLI path**: The commands below use the CLI. In the IDE or desktop app, open
 > the same practice project and use that surface's controls to inspect the
 > workspace and review changes.
+
+Check the command-line tools before continuing:
+
+```bash
+git --version
+rg --version
+```
+
+If `rg` is unavailable, install it or use an equivalent read-only search such
+as `grep -n` for the verification step.
 
 ### Step 0: Enter the tutorial checkout
 

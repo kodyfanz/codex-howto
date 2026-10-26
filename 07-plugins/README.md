@@ -234,6 +234,21 @@ anything or connecting to an external service. Follow the steps in order. The
 first directory in which you run Codex must be the disposable practice
 repository, not this tutorial checkout.
 
+### Prerequisites
+
+- Codex CLI installed and authenticated.
+- Python 3, `git`, `rg`, and a POSIX shell available on the PATH.
+
+```bash
+codex --version
+python3 --version
+git --version
+rg --version
+```
+
+Install `rg` or use an equivalent read-only search command before inspecting
+the copied package contents.
+
 ### Step 0 — Enter the tutorial checkout
 
 ```bash
