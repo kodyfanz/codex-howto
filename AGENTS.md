@@ -45,6 +45,15 @@ subject:
 - Specify the requested change, its file scope, and constraints. Do not leave a
   standalone code block without explaining what to paste, where to run it, or
   why it is needed.
+- Keep files in a module's example directories as reusable templates with
+  placeholders when they are intended for real repositories. Put the
+  placeholder-free, practice-specific version directly in the lesson so a
+  learner can copy it and complete the exercise without inventing values.
+- Explain the exact destination path and filename for every practice file. A
+  learner may create it with an editor they know or with `nano`; the lesson
+  should not require a particular editor. State that the placeholder template
+  is the basic starting point for a real repository, where paths, commands, and
+  rules must be replaced with verified project-specific facts.
 - Include independent verification commands, expected output or observable
   results, success criteria, and the learning outcome. Learners should be able
   to tell whether the exercise worked without trusting an agent summary.
