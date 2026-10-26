@@ -185,22 +185,157 @@ replace workflow instructions.
 Copy the relevant table into a reviewed `config.toml`; do not concatenate every
 example by default.
 
-## Hands-on exercise: read-only documentation server
+## Hands-on exercise: connect a read-only documentation server
 
-1. Review the OpenAI Docs server URL in official documentation.
-2. Add it with `codex mcp add` or copy the HTTP TOML example into an appropriate
-   config scope.
-3. Run `codex mcp list` and inspect it with `/mcp`.
-4. Ask Codex to search for one documented topic and open the primary result.
-5. Confirm the response includes a direct official link.
-6. Remove or disable the server after the exercise if it is not needed.
+This exercise configures the OpenAI Docs MCP server for one disposable project
+and uses it for a read-only documentation lookup. Follow the steps in order.
+The first directory in which you run Codex must be the practice repository, not
+this tutorial checkout.
+
+### Step 0 — Enter the tutorial checkout
+
+```bash
+cd /path/to/codex-howto
+TUTORIAL_ROOT="$PWD"
+```
+
+### Step 1 — Create an isolated practice repository
+
+Create the practice project outside this checkout, outside another repository,
+and outside a parent tree that already contains a project-level `AGENTS.md`.
+The MCP configuration below is project-local and should not be copied into a
+real project without reviewing its scope and approval mode.
+
+```bash
+PRACTICE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/codex-mcp-practice.XXXXXX")"
+git init -q "$PRACTICE_ROOT"
+mkdir -p "$PRACTICE_ROOT/.codex"
+printf '%s\n' '# MCP practice project' > "$PRACTICE_ROOT/README.md"
+printf 'Practice project: %s\n' "$PRACTICE_ROOT"
+test "$(git -C "$PRACTICE_ROOT" rev-parse --show-toplevel)" = "$PRACTICE_ROOT"
+find "$PRACTICE_ROOT" \( -name 'AGENTS.md' -o -name 'AGENTS.override.md' \) -print
+```
+
+The final command should print nothing. If you already know how to create a
+clean practice repository, you may skip this setup block, assign its absolute
+path to `PRACTICE_ROOT`, and create the same `.codex` directory yourself.
+
+### Step 2 — Add the reviewed, project-local configuration
+
+Create this file at `$PRACTICE_ROOT/.codex/config.toml`:
+
+```bash
+cat > "$PRACTICE_ROOT/.codex/config.toml" <<'EOF'
+[mcp_servers.openaiDeveloperDocs]
+url = "https://developers.openai.com/mcp"
+enabled = true
+default_tools_approval_mode = "prompt"
+EOF
+```
+
+This declares a streamable HTTP server, keeps the configuration in the
+practice project's `.codex` scope, and requires approval before a tool call.
+It contains no token or OAuth secret. Do not add a bearer token unless the
+server requires one; if it does, store only an environment-variable name and
+keep the value outside the repository.
+
+Inspect what you wrote before starting Codex:
+
+```bash
+sed -n '1,40p' "$PRACTICE_ROOT/.codex/config.toml"
+rg -n 'token|secret|api[_-]?key|authorization' "$PRACTICE_ROOT/.codex" || true
+```
+
+Expected result: the server URL and `prompt` approval mode are visible, and the
+credential scan prints nothing.
+
+### Step 3 — Enter the practice project and inspect the server
+
+Enter the project before starting Codex. This ensures the project-local
+configuration is the one being tested.
+
+```bash
+cd "$PRACTICE_ROOT"
+pwd
+git status --short
+codex mcp list
+codex mcp get openaiDeveloperDocs
+```
+
+Expected result: `pwd` prints `$PRACTICE_ROOT`; the list shows the configured
+server; and `get` shows the reviewed URL without any secret value. If the
+server is unavailable, record the startup error and continue to the
+configuration checks—do not weaken approval settings to hide the failure.
+
+### Step 4 — Start Codex and inspect active tools
+
+```bash
+codex
+```
+
+Inside the Codex prompt, run `/pwd` and then `/mcp`. Confirm that the active
+server is the project-local OpenAI Docs server. Read the displayed tool names
+and annotations before approving anything; the configuration file is not a
+substitute for reviewing server behavior.
+
+### Step 5 — Make one read-only documentation request
+
+Use this copy-ready prompt:
+
+```text
+Use only the configured OpenAI Docs MCP server to find the current official
+documentation for Codex skills. Read the primary result, summarize the
+definition in plain language, and include its direct official URL. Do not edit
+files, call tools that mutate external systems, or use an unconfigured server.
+Ask for approval before every MCP tool call.
+```
+
+Expected result: Codex requests approval for the MCP calls, retrieves an
+official OpenAI documentation page, and includes a direct `https://` link. If
+the server cannot connect, report the exact failure and do not substitute an
+unverified source.
+
+### Step 6 — Verify scope and safety independently
+
+Exit Codex and run:
+
+```bash
+git status --short
+git diff -- .codex/config.toml README.md
+rg -n 'https://developers.openai.com/mcp|default_tools_approval_mode = "prompt"' .codex/config.toml
+rg -n 'token|secret|api[_-]?key|authorization' .codex || true
+```
+
+Expected result: no application files changed, the configuration contains the
+expected URL and approval mode, and no credential values are present. Explain
+that `.codex/config.toml` is project-local while `~/.codex/config.toml` would
+be personal configuration; the exercise intentionally uses the former.
 
 ### Success criteria
 
-- The server initializes without credentials in the repository.
-- Only expected tools appear.
-- Retrieved claims link to the primary official page.
-- You can identify the configuration scope and transport.
+- The server is configured in the intended project scope with streamable HTTP.
+- No token, OAuth secret, or account identifier is stored in the repository.
+- The active server and tools are inspected before approval.
+- The request is read-only and returns a primary official link, or records an
+  actionable connection failure without inventing a result.
+- You can explain transport, scope, approval mode, and credential handling.
+
+### What you learned
+
+You practiced treating MCP as a privileged integration: choose a transport,
+configure the narrowest useful scope, inspect tools and approvals, keep
+credentials outside version control, and verify the source of retrieved claims.
+
+### Step 7 — Clean up
+
+Exit Codex and remove only the disposable project when you are finished:
+
+```bash
+rm -rf "$PRACTICE_ROOT"
+unset PRACTICE_ROOT TUTORIAL_ROOT
+```
+
+Do not substitute the Codex How To repository path for `$PRACTICE_ROOT`.
 
 ## Troubleshooting
 
