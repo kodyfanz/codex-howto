@@ -199,27 +199,156 @@ Plugin hook commands can use `PLUGIN_ROOT` for the installed plugin directory
 and `PLUGIN_DATA` for writable plugin state. Do not assume the installed plugin
 directory is writable.
 
-## Hands-on exercise
+## Hands-on exercise: test a safe pre-tool hook
 
-1. Copy `examples/hooks.json` and both handler scripts into a disposable Git
-   repository, preserving the command paths or adapting them carefully.
-2. Run `test_hooks.py` before enabling the configuration.
-3. Start Codex from the repository and open `/hooks`.
-4. Review the exact command, matcher, and script before trusting it.
-5. Ask Codex to run a harmless command and confirm no denial is produced.
-6. Inspect the configured hook with a simulated destructive input through the
-   test suite; do not run the destructive command itself.
-7. Change one harmless line in the hook definition and confirm Codex requires
-   review again.
+This exercise installs the tutorial's session and pre-tool hooks in a disposable
+Git repository, tests the handlers before starting Codex, and then reviews the
+project hook configuration. Follow the steps in order. The first directory in
+which you run Codex must be the practice repository, not this tutorial
+checkout.
+
+### Step 0 — Enter the tutorial checkout
+
+```bash
+cd /path/to/codex-howto
+TUTORIAL_ROOT="$PWD"
+```
+
+### Step 1 — Create an isolated practice repository
+
+Create the practice project outside this checkout, outside another repository,
+and outside a parent tree that already contains a project-level `AGENTS.md`.
+Hooks execute host commands, so use a disposable project until you understand
+the exact command and scope.
+
+```bash
+PRACTICE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/codex-hooks-practice.XXXXXX")"
+git init -q "$PRACTICE_ROOT"
+mkdir -p "$PRACTICE_ROOT/.codex" "$PRACTICE_ROOT/06-hooks/examples"
+printf '%s\n' '# Hooks practice project' > "$PRACTICE_ROOT/README.md"
+cp 06-hooks/examples/hooks.json "$PRACTICE_ROOT/.codex/hooks.json"
+cp 06-hooks/examples/hooks-config.toml "$PRACTICE_ROOT/06-hooks/examples/hooks-config.toml"
+cp 06-hooks/examples/pre_tool_policy.py "$PRACTICE_ROOT/06-hooks/examples/pre_tool_policy.py"
+cp 06-hooks/examples/session_start.py "$PRACTICE_ROOT/06-hooks/examples/session_start.py"
+cp 06-hooks/examples/test_hooks.py "$PRACTICE_ROOT/06-hooks/examples/test_hooks.py"
+printf 'Practice project: %s\n' "$PRACTICE_ROOT"
+test "$(git -C "$PRACTICE_ROOT" rev-parse --show-toplevel)" = "$PRACTICE_ROOT"
+find "$PRACTICE_ROOT" \( -name 'AGENTS.md' -o -name 'AGENTS.override.md' \) -print
+```
+
+The copied paths intentionally match the commands in `hooks.json`: the hook
+resolves the repository root and then imports the handler under
+`06-hooks/examples`. The final `find` command should print nothing. If you
+already know how to prepare this isolated repository, you may skip the setup
+block, assign your absolute path to `PRACTICE_ROOT`, and copy the same files.
+
+### Step 2 — Test handlers before enabling them
+
+Run the provided tests from the practice project. These tests feed simulated
+JSON to the handlers; they do not install a hook or execute the inspected shell
+commands.
+
+```bash
+cd "$PRACTICE_ROOT"
+pwd
+python3 06-hooks/examples/test_hooks.py
+```
+
+Expected result: all tests pass. A failure here is a reason to inspect the
+handler and input shape before opening a Codex session; do not enable a failing
+hook just to see what it does live.
+
+### Step 3 — Review the exact configuration
+
+Inspect the hook definition, matcher, command path, and timeout:
+
+```bash
+sed -n '1,120p' .codex/hooks.json
+rg -n 'PreToolUse|SessionStart|matcher|command|timeout' .codex/hooks.json
+```
+
+Expected result: `PreToolUse` matches exactly `Bash`, the command resolves from
+the Git root, and the timeout is explicit. The example blocks only a narrow
+set of destructive command shapes; it is not a complete shell parser or a
+security boundary.
+
+### Step 4 — Start Codex and inspect trust
+
+Start Codex from the practice project:
+
+```bash
+codex
+```
+
+Inside the Codex prompt, run `/pwd` and confirm `$PRACTICE_ROOT`, then open
+`/hooks`. Review the source, command, matcher, and trust state before enabling
+or approving the project hook. A project hook may require a new trust decision
+after its definition changes.
+
+### Step 5 — Exercise the safe path
+
+Ask Codex to run a harmless command:
+
+```text
+Run the harmless shell command `printf 'hook-safe'`. Do not edit files.
+```
+
+Expected result: the command runs and the pre-tool policy emits no denial. If
+Codex asks for approval, inspect the exact command and approve only if it is the
+expected harmless request.
+
+### Step 6 — Exercise the deny path without running it
+
+Do not ask Codex to execute a destructive command. Instead, run the existing
+simulated-input tests and inspect the documented denial shape:
+
+```bash
+python3 06-hooks/examples/test_hooks.py
+```
+
+Expected result: malformed matching input is handled without a traceback and
+blocked samples return `hookSpecificOutput` with `permissionDecision` set to
+`deny`. This proves the handler logic without invoking `git reset --hard`,
+forced cleanup, or another destructive command.
+
+### Step 7 — Verify the working tree and cleanup scope
+
+Exit Codex and inspect what changed:
+
+```bash
+git status --short
+git diff -- .codex/hooks.json README.md
+```
+
+Expected result: the harmless command did not change the README or hook
+definition. The copied practice files may appear as untracked files; no source
+file outside the practice repository should be affected.
 
 ### Success criteria
 
-- Malformed matching input is handled without a traceback.
-- Safe sample commands produce no hook output.
-- Denied sample commands return the documented `PreToolUse` shape.
-- The hook has an explicit matcher and timeout.
-- You can explain why the example is a guardrail rather than a security
-  boundary.
+- Handler tests pass before the live session starts.
+- The hook has an explicit matcher, repository-root command path, and timeout.
+- A safe command is allowed and a simulated destructive input is denied.
+- No destructive command is executed during the exercise.
+- You can explain why hooks are guardrails and why sandbox, approval, and
+  service-side authorization remain the hard boundaries.
+
+### What you learned
+
+You practiced the complete hook workflow: copy a reviewed example, test the
+JSON handler independently, inspect trust and matchers, observe a safe event,
+and verify a deny path without risking a real side effect.
+
+### Step 8 — Clean up
+
+Exit Codex and remove only the disposable project:
+
+```bash
+rm -rf "$PRACTICE_ROOT"
+unset PRACTICE_ROOT TUTORIAL_ROOT
+```
+
+Do not substitute the Codex How To repository path for `$PRACTICE_ROOT`.
 
 ## Troubleshooting
 
