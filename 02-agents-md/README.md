@@ -315,14 +315,38 @@ Reserve formatting rules for automated tooling unless formatting can hide a real
 
 ## Advanced configuration
 
-If a repository already has a durable instruction filename, list it as a fallback in Codex configuration:
+This optional setting is for repositories that already use another durable
+instruction filename. Put it in a Codex TOML configuration file, not inside
+`AGENTS.md`:
+
+- Use `~/.codex/config.toml` to apply it to your Codex sessions across
+  repositories.
+- Use `<repo>/.codex/config.toml` to apply it only to one trusted repository.
+
+For the disposable project in this module, the project-scoped location would
+be `$PRACTICE_ROOT/.codex/config.toml`. Create the directory and open the file
+with `nano` or another editor before adding the settings:
+
+```bash
+mkdir -p "$PRACTICE_ROOT/.codex"
+nano "$PRACTICE_ROOT/.codex/config.toml"
+```
+
+Add this TOML content:
 
 ```toml
 project_doc_fallback_filenames = ["TEAM_GUIDE.md"]
 project_doc_max_bytes = 65536
 ```
 
-Codex still checks `AGENTS.override.md` and `AGENTS.md` first. Restart the CLI or open a new session after changing discovery configuration or instruction files.
+Then place `TEAM_GUIDE.md` at the repository root if you want Codex to use it
+as a fallback. Codex still checks `AGENTS.override.md` and `AGENTS.md` first;
+the fallback is not a replacement for those names. Restart the CLI or open a
+new session after changing discovery configuration or instruction files.
+
+This block is explanatory and optional for the layered-guidance exercise. Do
+not add it unless you are intentionally testing a fallback filename or a
+different instruction-size limit.
 
 ## Troubleshooting
 

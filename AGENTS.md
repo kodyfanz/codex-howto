@@ -50,6 +50,21 @@ subject:
 - Specify the requested change, its file scope, and constraints. Do not leave a
   standalone code block without explaining what to paste, where to run it, or
   why it is needed.
+- Treat every code, TOML, JSON, YAML, or configuration block as an action the
+  learner must be able to place correctly. Immediately before or after each
+  block, state all of the following when applicable: the exact destination path
+  and filename, the directory or surface where a command runs, whether the
+  block is required or optional, its scope (user, project, plugin, or
+  temporary), what it changes, and the observable result to expect.
+- Never show a configuration snippet without identifying the configuration file
+  that owns it. If a setting has both user and project scopes, show the
+  recommended scope for the exercise and explain how the other scope differs.
+- For an optional or advanced snippet, say explicitly that it is not part of
+  the main exercise and explain when a learner should use it. If a snippet
+  references a filename, command, environment variable, or placeholder, give
+  the next action required to create or replace that value.
+- Review lessons for orphan blocks: a reader should never have to infer what
+  to copy, where to put it, whether to execute it, or how to verify it.
 - Keep files in a module's example directories as reusable templates with
   placeholders when they are intended for real repositories. Put the
   placeholder-free, practice-specific version directly in the lesson so a
