@@ -198,28 +198,195 @@ requires substantial steering.
 7. Pause the task when the underlying project, model, connection, or owner
    changes.
 
-## Hands-on exercise
+## Hands-on exercise: plan, verify, and prepare a recurring workflow
 
-Design a workflow for a feature that requires repository research, a local UI
-check, and a weekly documentation-drift report.
+This exercise designs (but does not publish or schedule) a small feature that
+needs repository research, a local UI check, and a weekly documentation-drift
+report. Follow the steps in order. The first directory in which you run Codex
+must be the practice repository, not this tutorial checkout.
 
-1. Write the implementation plan using `examples/PLANS.md`.
-2. Assign research and integration to the current chat; delegate only one
-   independent scan.
-3. Choose Local or Worktree for the UI implementation and explain why Cloud is
-   or is not suitable.
-4. Define the server readiness signal and termination step.
-5. Adapt `scheduled-doc-check.md` for the weekly report without enabling a
-   schedule.
-6. Identify every action that would require explicit external authority.
+### Step 0 — Enter the tutorial checkout
+
+```bash
+cd /path/to/codex-howto
+TUTORIAL_ROOT="$PWD"
+```
+
+### Step 1 — Create an isolated practice repository
+
+Create a disposable Git repository outside this checkout, outside another
+repository, and outside a parent tree that already contains a project-level
+`AGENTS.md`.
+
+```bash
+PRACTICE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/codex-advanced-practice.XXXXXX")"
+git init -q "$PRACTICE_ROOT"
+mkdir -p "$PRACTICE_ROOT/docs" "$PRACTICE_ROOT/plans" "$PRACTICE_ROOT/prompts"
+printf '%s\n' '# Advanced workflow practice' '' 'A small local page for a UI check.' > "$PRACTICE_ROOT/README.md"
+cat > "$PRACTICE_ROOT/index.html" <<'EOF'
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Practice page</title></head>
+<body><main><h1>Practice page</h1><p>Baseline content.</p></main></body></html>
+EOF
+printf '%s\n' '# Documentation' '' 'Baseline documentation.' > "$PRACTICE_ROOT/docs/README.md"
+git -C "$PRACTICE_ROOT" add .
+git -C "$PRACTICE_ROOT" -c user.name='Codex learner' -c user.email='codex-learner.invalid' commit -qm 'Create advanced workflow baseline'
+printf 'Practice project: %s\n' "$PRACTICE_ROOT"
+test "$(git -C "$PRACTICE_ROOT" rev-parse --show-toplevel)" = "$PRACTICE_ROOT"
+git -C "$PRACTICE_ROOT" status --short
+find "$PRACTICE_ROOT" \( -name 'AGENTS.md' -o -name 'AGENTS.override.md' \) -print
+```
+
+Expected result: the repository is clean and the final `find` command prints
+nothing. If you already know how to prepare this project, you may skip the
+setup block, assign its absolute path to `PRACTICE_ROOT`, and create the same
+page and directories yourself.
+
+### Step 2 — Create a durable execution plan
+
+Copy the template into the practice project, then inspect its sections:
+
+```bash
+cp 09-advanced-workflows/examples/PLANS.md "$PRACTICE_ROOT/plans/ui-docs-workflow.md"
+cd "$PRACTICE_ROOT"
+sed -n '1,220p' plans/ui-docs-workflow.md
+```
+
+Start Codex from this project and use `/plan`, or paste this request in an
+implementation-capable session:
+
+```text
+Use plans/ui-docs-workflow.md as the durable plan for a feature that adds a
+small visible status line to index.html, verifies it in a local browser, and
+prepares a weekly documentation-drift report. Research the repository first.
+Keep the plan bounded to index.html, docs/, and plans/. Record scope, owner,
+decisions, dependencies, readiness signal, stopping condition, verification,
+recovery, and every action that needs human authority. Do not edit files or
+start a server until I approve the plan.
+```
+
+Expected result: the plan names the current chat as owner of integration,
+assigns at most one independent read-only scan, and does not pretend that a
+Cloud task can use the local browser or sign-in. Do not continue until the plan
+has explicit verification and recovery sections.
+
+### Step 3 — Choose the execution environment explicitly
+
+Add or review a decision in the plan with this reasoning:
+
+- **Local** is appropriate for the UI check because the page and browser are
+  local dependencies.
+- **Worktree** is appropriate if implementation should be isolated from an
+  unfinished checkout.
+- **Cloud** is not suitable unless the page, server, and browser verification
+  are reproducibly available in its published environment.
+
+Verify that the plan distinguishes these dependencies from convenience. A
+local browser session, ignored files, VPN, and personal MCP configuration do
+not transfer automatically to Cloud.
+
+### Step 4 — Run a bounded local UI check
+
+Start the smallest possible local server, capture its process ID and log, wait
+for a readiness response, and stop the exact process after checking it:
+
+```bash
+SERVER_LOG="$(mktemp "${TMPDIR:-/tmp}/codex-advanced-server.XXXXXX.log")"
+python3 -m http.server 8000 --directory "$PRACTICE_ROOT" >"$SERVER_LOG" 2>&1 &
+SERVER_PID="$!"
+trap 'kill "$SERVER_PID" 2>/dev/null || true; rm -f "$SERVER_LOG"' EXIT
+python3 - "$SERVER_PID" <<'PY'
+import time
+import urllib.request
+for _ in range(20):
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:8000/", timeout=1) as response:
+            if response.status == 200:
+                print("ready")
+                break
+    except OSError:
+        time.sleep(0.25)
+else:
+    raise SystemExit("server did not become ready")
+PY
+curl --fail --silent http://127.0.0.1:8000/ | rg -n 'Practice page'
+kill "$SERVER_PID"
+wait "$SERVER_PID" 2>/dev/null || true
+trap - EXIT
+rm -f "$SERVER_LOG"
+```
+
+Expected result: `ready` is printed, the page contains `Practice page`, and
+the process is stopped. If a browser is available, open exactly
+`http://127.0.0.1:8000/` and inspect the rendered page; a screenshot alone is
+not proof that the underlying HTML is correct. Do not leave a background server
+running after verification.
+
+### Step 5 — Prepare, but do not schedule, the recurring report
+
+Copy the safe prompt example and adapt it to this repository:
+
+```bash
+cp "$TUTORIAL_ROOT/09-advanced-workflows/examples/scheduled-doc-check.md" \
+  "$PRACTICE_ROOT/prompts/weekly-doc-check.md"
+```
+
+Edit the copied prompt so it states all of the following:
+
+- inspect only `docs/` and report changed or missing documentation;
+- return a clear no-change result when there is no drift;
+- report failures and missing evidence separately;
+- include direct file references and links where available;
+- never edit, publish, tag, deploy, or send notifications;
+- stop and ask for input when the repository or owner is unavailable.
+
+Do not create a schedule in this exercise. First test the adapted prompt
+manually in an ordinary read-only Codex session, then review the first several
+runs before scheduling it in a supported surface.
+
+### Step 6 — Review authority, ownership, and evidence
+
+Inspect the plan and prompt, then run:
+
+```bash
+git status --short
+git diff --check
+git diff -- plans/ui-docs-workflow.md prompts/weekly-doc-check.md
+```
+
+Expected result: every unit has one owner and output contract; the UI server has
+a readiness signal and stopping condition; the report has success, no-change,
+and failure outputs; and publishing, scheduling, merging, or deployment are
+marked as requiring explicit authority.
 
 ### Success criteria
 
-- Each unit of work has one owner and output contract.
-- Environment choice follows real dependencies rather than convenience.
-- Long-running work has readiness and stopping conditions.
-- The schedule prompt defines no-change and failure behavior.
-- The workflow does not assume local secrets or sign-ins transfer to Cloud.
+- The plan records scope, decisions, dependencies, verification, recovery, and
+  stopping conditions.
+- Environment choice follows actual local/browser dependencies.
+- The local server is started, checked, and stopped by its exact PID.
+- The recurring prompt is prepared but no schedule or external action is
+  enabled.
+- The workflow does not assume local secrets, sign-ins, or ignored files
+  transfer to Cloud.
+
+### What you learned
+
+You practiced choosing planning depth, assigning ownership, selecting an
+execution environment, monitoring a bounded process, and designing a durable
+read-only prompt with explicit stopping behavior.
+
+### Step 7 — Clean up
+
+Return to the tutorial checkout and remove only the disposable project:
+
+```bash
+cd "$TUTORIAL_ROOT"
+rm -rf "$PRACTICE_ROOT"
+unset PRACTICE_ROOT SERVER_LOG SERVER_PID TUTORIAL_ROOT
+```
+
+Do not substitute the Codex How To repository path for `$PRACTICE_ROOT`.
 
 ## Troubleshooting
 
