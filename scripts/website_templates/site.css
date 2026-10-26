@@ -67,7 +67,7 @@ h2 { font-size: clamp(1.55rem, 3vw, 2.15rem); margin-top: 2.8rem; padding-top: .
 h3 { font-size: 1.25rem; margin-top: 2rem; }
 p, li { max-width: 74ch; }
 blockquote { position: relative; margin: 1.75rem 0; padding: 1rem 1.35rem 1rem 2.8rem; background: linear-gradient(105deg, var(--accent-soft), color-mix(in srgb, var(--accent-soft) 55%, var(--paper))); border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line)); border-left: 5px solid var(--accent); border-radius: 0 10px 10px 0; box-shadow: 0 8px 24px rgba(33, 47, 40, .06); }
-blockquote::before { content: "“"; position: absolute; left: .8rem; top: .15rem; color: var(--accent); font-family: Georgia, serif; font-size: 2.8rem; line-height: 1; }
+blockquote::before { content: "\201C"; position: absolute; left: .8rem; top: .15rem; color: var(--accent); font-family: Georgia, serif; font-size: 2.8rem; line-height: 1; }
 blockquote p { margin: 0; }
 code { background: color-mix(in srgb, var(--accent-soft) 78%, var(--paper)); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 16%, transparent); border-radius: 5px; padding: .12em .38em; font-family: "SFMono-Regular", Consolas, monospace; font-size: .9em; }
 pre { position: relative; max-width: 100%; overflow-x: auto; margin: 1.35rem 0; padding: 3.6rem 1.35rem 1.35rem; background: linear-gradient(135deg, color-mix(in srgb, var(--code) 96%, #163d32), var(--code)); color: var(--code-ink); border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent); border-radius: 10px; box-shadow: 0 12px 28px rgba(9, 16, 13, .18); line-height: 1.58; }

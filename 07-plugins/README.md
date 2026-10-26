@@ -222,6 +222,164 @@ The default personal marketplace is discovered automatically and does not need
 These examples deliberately avoid live MCP servers and credentials. They show
 package composition without requiring an external account.
 
+## Hands-on exercise: validate a read-only plugin package
+
+This exercise uses the `devops-readiness` example because it contains a
+manifest, a skill, a deterministic validator, and tests without deploying
+anything or connecting to an external service. Follow the steps in order. The
+first directory in which you run Codex must be the disposable practice
+repository, not this tutorial checkout.
+
+### Step 0 — Enter the tutorial checkout
+
+```bash
+cd /path/to/codex-howto
+TUTORIAL_ROOT="$PWD"
+```
+
+### Step 1 — Create an isolated practice repository
+
+Create the practice project outside this checkout, outside another repository,
+and outside a parent tree that already contains a project-level `AGENTS.md`.
+This keeps plugin files and test data separate from the tutorial source.
+
+```bash
+PRACTICE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/codex-plugins-practice.XXXXXX")"
+git init -q "$PRACTICE_ROOT"
+mkdir -p "$PRACTICE_ROOT/plugins"
+cp -R 07-plugins/examples/devops-readiness "$PRACTICE_ROOT/plugins/"
+printf '%s\n' '# Plugin practice project' > "$PRACTICE_ROOT/README.md"
+printf 'Practice project: %s\n' "$PRACTICE_ROOT"
+test "$(git -C "$PRACTICE_ROOT" rev-parse --show-toplevel)" = "$PRACTICE_ROOT"
+find "$PRACTICE_ROOT" \( -name 'AGENTS.md' -o -name 'AGENTS.override.md' \) -print
+```
+
+The final command should print nothing. If you already know how to create an
+isolated practice project, you may skip the setup block, assign its absolute
+path to `PRACTICE_ROOT`, and copy the same plugin directory yourself.
+
+### Step 2 — Inspect the package boundary before running it
+
+Enter the practice project and inspect the manifest and skill before trusting
+any component:
+
+```bash
+cd "$PRACTICE_ROOT"
+pwd
+sed -n '1,160p' plugins/devops-readiness/.codex-plugin/plugin.json
+sed -n '1,180p' plugins/devops-readiness/skills/assess-deployment-readiness/SKILL.md
+rg -n 'token|secret|api[_-]?key|curl|wget|deploy|rollback|PLUGIN_ROOT' plugins/devops-readiness
+```
+
+Expected result: the manifest points to `./skills/`, the skill explicitly says
+that it does not deploy or mutate infrastructure, and the package contains no
+credentials or hidden network command. `PLUGIN_ROOT` is a path supplied by the
+plugin runtime; it is not a secret.
+
+### Step 3 — Run the package's deterministic tests
+
+Run the bundled tests before attempting installation or invocation:
+
+```bash
+python3 plugins/devops-readiness/scripts/test_check_deployment_plan.py
+```
+
+Expected result: all tests pass. These tests validate the plan structure only;
+they do not prove that a deployment is safe and do not contact infrastructure.
+
+### Step 4 — Test complete and incomplete plans
+
+Create two synthetic plans in the practice project. They contain no real host,
+credential, account, or release identifier.
+
+```bash
+cat > complete-plan.json <<'EOF'
+{
+  "environment": "staging",
+  "version": "example-version",
+  "owner": "release manager",
+  "rollback_trigger": "error budget threshold exceeded",
+  "preflight_checks": ["tests passed"],
+  "monitoring_signals": ["request error rate"],
+  "rollback_steps": ["restore the previous approved version"]
+}
+EOF
+printf '%s\n' '{"environment":"staging"}' > incomplete-plan.json
+python3 plugins/devops-readiness/scripts/check_deployment_plan.py complete-plan.json
+python3 plugins/devops-readiness/scripts/check_deployment_plan.py incomplete-plan.json; test "$?" -eq 1
+```
+
+Expected result: the complete plan reports that its structure is complete; the
+incomplete plan returns exit code `1` and lists missing fields. The validator
+does not approve, deploy, rollback, or contact an external service.
+
+### Step 5 — Review the skill boundary with Codex
+
+Start Codex from the practice project:
+
+```bash
+codex
+```
+
+Confirm `/pwd` reports `$PRACTICE_ROOT`, then ask:
+
+```text
+Review plugins/devops-readiness/complete-plan.json using the local
+devops-readiness plugin package. Report readiness status, confirmed evidence,
+missing evidence, rollback or monitoring gaps, and one next safe verification
+step. Do not deploy, approve, mutate infrastructure, or send notifications.
+```
+
+Expected result: the response is an assessment only, cites the synthetic plan,
+and preserves the plugin's no-deploy boundary. If the plugin is not installed
+on your surface, inspect the skill file and explain how its trigger and output
+contract would be tested; do not install an unreviewed package just to force the
+demo.
+
+### Step 6 — Verify the working tree and package contents
+
+Exit Codex and run:
+
+```bash
+git status --short
+git diff -- README.md
+test -f plugins/devops-readiness/.codex-plugin/plugin.json
+test -f plugins/devops-readiness/skills/assess-deployment-readiness/SKILL.md
+test -f plugins/devops-readiness/scripts/check_deployment_plan.py
+```
+
+Expected result: the practice files are untracked, no source file outside the
+practice project changed, and all referenced component paths exist. Structural
+validation is evidence about packaging, not authorization to install or run
+external actions.
+
+### Success criteria
+
+- The manifest and every referenced component path are reviewed and present.
+- Bundled tests pass and distinguish complete from incomplete plans.
+- The skill output is an assessment, never a deployment approval or action.
+- No credentials, hidden network calls, or real infrastructure are used.
+- You can explain the difference between a plugin, a skill, a marketplace, and
+  the host's permission/trust controls.
+
+### What you learned
+
+You practiced reviewing plugin composition, validating deterministic scripts,
+testing a skill's mutation boundary, and separating package structure from
+runtime authorization.
+
+### Step 7 — Clean up
+
+Exit Codex and remove only the disposable project:
+
+```bash
+cd "$TUTORIAL_ROOT"
+rm -rf "$PRACTICE_ROOT"
+unset PRACTICE_ROOT TUTORIAL_ROOT
+```
+
+Do not substitute the Codex How To repository path for `$PRACTICE_ROOT`.
+
 ## Validate the examples
 
 From the `plugin-creator` skill directory, validate each package:

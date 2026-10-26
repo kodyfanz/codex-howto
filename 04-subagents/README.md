@@ -186,22 +186,145 @@ Narrow the task or perform the sensitive step explicitly in the main thread.
 
 ## Hands-on exercise: parallel review
 
-1. Copy `risk-reviewer.toml` into a disposable project's `.codex/agents/`.
-2. Start a fresh Codex session.
-3. Ask one explorer to map the changed paths and one risk reviewer to review the
-   diff using the explorer's evidence.
-4. Require both agents to avoid edits and return file references.
-5. Inspect activity with `/subagents`.
-6. Ask the main agent to consolidate duplicates and distinguish confirmed
-   findings from uncertainty.
+This exercise uses two read-only custom agents to review one small Git diff.
+Follow the steps in order. The first directory in which you run Codex must be
+the disposable practice repository, not this tutorial checkout.
+
+### Step 0 — Enter the tutorial checkout
+
+```bash
+cd /path/to/codex-howto
+TUTORIAL_ROOT="$PWD"
+```
+
+### Step 1 — Create an isolated practice repository
+
+Create the practice project outside this checkout, outside another repository,
+and outside a parent tree that already contains a project-level `AGENTS.md`.
+This gives subagent discovery one clear project root.
+
+```bash
+PRACTICE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/codex-subagents-practice.XXXXXX")"
+git init -q "$PRACTICE_ROOT"
+printf '%s\n' '# Subagent review practice' '' 'Baseline project description.' > "$PRACTICE_ROOT/README.md"
+git -C "$PRACTICE_ROOT" add README.md
+git -C "$PRACTICE_ROOT" -c user.name='Codex learner' -c user.email='codex-learner.invalid' commit -qm 'Create practice baseline'
+printf '%s\n' 'This line is the intentional review change.' >> "$PRACTICE_ROOT/README.md"
+mkdir -p "$PRACTICE_ROOT/.codex/agents"
+cp 04-subagents/examples/codebase-explorer.toml "$PRACTICE_ROOT/.codex/agents/codebase_explorer.toml"
+cp 04-subagents/examples/risk-reviewer.toml "$PRACTICE_ROOT/.codex/agents/risk_reviewer.toml"
+cp 04-subagents/examples/subagents-config.toml "$PRACTICE_ROOT/.codex/config.toml"
+printf 'Practice project: %s\n' "$PRACTICE_ROOT"
+test "$(git -C "$PRACTICE_ROOT" rev-parse --show-toplevel)" = "$PRACTICE_ROOT"
+find "$PRACTICE_ROOT" \( -name 'AGENTS.md' -o -name 'AGENTS.override.md' \) -print
+```
+
+This setup creates a baseline commit, adds one known README change for review,
+copies two custom agent definitions, and enables up to four concurrent agents.
+The final `find` command should print nothing. If you already know how to make
+this isolated repository, you may skip the setup block, assign your absolute
+path to `PRACTICE_ROOT`, and prepare the same files yourself.
+
+### Step 2 — Enter the practice project and inspect the baseline
+
+Enter the project before starting Codex. The custom agents are discovered from
+the current project root.
+
+```bash
+cd "$PRACTICE_ROOT"
+pwd
+git status --short
+git diff -- README.md
+```
+
+Expected result: `pwd` prints `$PRACTICE_ROOT`, the status shows only the
+modified `README.md`, and the diff contains the one intentional line.
+
+### Step 3 — Start Codex and confirm agent configuration
+
+```bash
+codex
+```
+
+Inside the Codex prompt, run `/pwd` and confirm the practice path. Then use
+`/subagents` to inspect the available agent threads or roles. The project files
+are definitions that the main session can use; they do not grant permissions
+and do not edit the repository by themselves.
+
+### Step 4 — Delegate bounded, read-only work
+
+Paste this complete request:
+
+```text
+Review the current README.md diff without editing files or committing anything.
+Delegate two bounded read-only tasks: ask codebase_explorer to map the changed
+path and report confirmed evidence, then ask risk_reviewer to check correctness,
+security boundaries, reliability, and missing tests using that evidence. Keep
+their work non-overlapping, wait for both results, and consolidate the final
+answer into user impact, actionable findings, checks run, and remaining
+uncertainty. Cite README.md for every finding and do not invent tests.
+```
+
+The explorer owns evidence mapping; the risk reviewer owns risk analysis. The
+main thread owns requirements and consolidation. Neither subagent should edit
+the practice repository.
+
+### Step 5 — Inspect and evaluate the results
+
+Use `/subagents` while the work is running to inspect activity. When the main
+agent returns, check the working tree from a terminal:
+
+```bash
+git status --short
+git diff -- README.md
+```
+
+Expected result: the original one-line diff is unchanged, no new files were
+created by the review, and the answer distinguishes confirmed findings from
+uncertainty. A correct review should mention the README change and state that
+there is no application behavior or test suite to inspect, rather than inventing
+a security issue.
+
+### Step 6 — Verify the agent definitions independently
+
+Exit Codex and verify the copied configuration:
+
+```bash
+test -f .codex/agents/codebase_explorer.toml
+test -f .codex/agents/risk_reviewer.toml
+test -f .codex/config.toml
+rg -n '^name =|^description =|developer_instructions|enabled|max_concurrent' .codex/agents .codex/config.toml
+git status --short
+```
+
+Expected result: all three files exist, both agents are explicitly read-only in
+their instructions, concurrency is set to 4, and only the intentional
+`README.md` change remains in the working tree.
 
 ### Success criteria
 
-- Each subagent receives a bounded role.
-- Neither agent edits files.
-- Results cite relevant files or symbols.
-- The main answer removes duplicates and does not overstate uncertainty.
-- You can explain why delegation improved this task.
+- The practice project has a clear root and a known, reviewable diff.
+- Each subagent receives a bounded, non-overlapping read-only role.
+- Results cite `README.md` and separate evidence from uncertainty.
+- Neither subagent edits files or commits changes.
+- The main thread consolidates duplicate findings without overstating risk.
+
+### What you learned
+
+You practiced when delegation is useful, how custom agents are discovered, how
+parent permissions constrain subagents, and why the main thread must retain
+scope, decisions, and integration responsibility.
+
+### Step 7 — Clean up
+
+Remove only the disposable repository after reviewing the result:
+
+```bash
+rm -rf "$PRACTICE_ROOT"
+unset PRACTICE_ROOT TUTORIAL_ROOT
+```
+
+Do not substitute the Codex How To repository path for `$PRACTICE_ROOT`.
 
 ## Troubleshooting
 

@@ -157,9 +157,9 @@ These are useful early commands in the CLI:
 
 Type `/` to see commands supported by your installed version. Find more
 examples, including `/mention`, `/plan`, `/compact`, `/init`, `/skills`,
-`/new`, and `/quit`, in the [quick reference](../QUICK_REFERENCE.md). Built-in slash commands control the client or session. Reusable team workflows belong in [skills](../03-skills/README.md).
+`/new`, and `/quit`, in the [quick reference](../QUICK_REFERENCE.md). Built-in slash commands control the client or session.
 
-To use one in the CLI, type `$` in the Codex prompt, choose a skill, then add your request after its name. For example:
+Reusable team workflows belong in [skills](../03-skills/README.md). To use one in the CLI, type `$` in the Codex prompt, choose a skill, then add your request after its name. For example:
 
 ```text
 $lesson-quiz Quiz me on Module 1 as a pre-test.
@@ -171,44 +171,124 @@ Enter this in Codex's prompt, not as a terminal command. For the full steps and 
 
 ### Prerequisites
 
-- A disposable project or a version-controlled project.
-- A clean or understood working tree.
-- One README with a small factual omission.
+- Codex CLI installed and authenticated, or an IDE/desktop session ready.
+- A disposable Git repository created outside this checkout and outside any
+  parent directory that already contains a project-level `AGENTS.md`.
+- A terminal available for independent diff and verification commands.
 
 > **CLI path**: The commands below use the CLI. In the IDE or desktop app, open
 > the same practice project and use that surface's controls to inspect the
 > workspace and review changes.
 
-### Step 1: Record the baseline
+### Step 0: Enter the tutorial checkout
 
-If the practice project is a Git repository, run:
+Use the real path to this checkout. The variable makes later copy-ready
+commands unambiguous.
 
 ```bash
+cd /path/to/codex-howto
+TUTORIAL_ROOT="$PWD"
+```
+
+### Step 1: Create an isolated practice project
+
+Create the practice project outside this checkout, outside another repository,
+and outside a directory tree that already contains a project-level
+`AGENTS.md`. This keeps unrelated instructions from changing the exercise.
+
+The Bash block below is a convenience setup, not a required Codex skill. It
+creates a temporary directory, initializes it as a Git repository, writes a
+minimal `README.md`, prints the path, confirms that Git recognizes the intended
+root, and checks that no nested instruction file was created. Read the block
+once before running it so you understand what it changes on your machine.
+
+If you already know how to create a clean practice repository, you may skip the
+setup block. Create the directory yourself, make sure it satisfies the same
+constraints, and assign its absolute path to `PRACTICE_ROOT`. The later steps
+use `$PRACTICE_ROOT` as a variable; replace that variable with your own path
+only if you prefer not to define it.
+
+For example, after preparing the repository yourself, verify the variable and
+root like this:
+
+```bash
+PRACTICE_ROOT="/absolute/path/to/your/practice-project"
+test "$(git -C "$PRACTICE_ROOT" rev-parse --show-toplevel)" = "$PRACTICE_ROOT"
+find "$PRACTICE_ROOT" \( -name 'AGENTS.md' -o -name 'AGENTS.override.md' \) -print
+```
+
+The `test` command must succeed and the `find` command should print nothing.
+Your repository should contain a README suitable for the small edit in Step 4.
+
+```bash
+PRACTICE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/codex-starting-practice.XXXXXX")"
+git init -q "$PRACTICE_ROOT"
+printf '%s\n' \
+  '# Codex starting practice' \
+  '' \
+  'This disposable repository is used to practice a small, reviewable edit.' \
+  > "$PRACTICE_ROOT/README.md"
+printf 'Practice project: %s\n' "$PRACTICE_ROOT"
+test "$(git -C "$PRACTICE_ROOT" rev-parse --show-toplevel)" = "$PRACTICE_ROOT"
+find "$PRACTICE_ROOT" \( -name 'AGENTS.md' -o -name 'AGENTS.override.md' \) -print
+```
+
+The final command should print nothing. The project intentionally contains one
+README and no application code or dependency setup.
+
+### Step 2: Enter the practice project and record the baseline
+
+Enter the project before starting Codex. Codex uses the current project
+directory as context.
+
+```bash
+cd "$PRACTICE_ROOT"
+pwd
 git status --short
 ```
 
-Otherwise, use a fresh disposable copy and note the files you intend to change.
+Expected result: `pwd` prints `$PRACTICE_ROOT` and `git status` prints nothing.
+If either result differs, stop and correct the directory first.
 
-If the output contains existing changes, note their files and do not ask Codex to overwrite them.
-
-### Step 2: Start Codex
+### Step 3: Start Codex and confirm context
 
 ```bash
-codex --cd /path/to/your-practice-project
+codex
 ```
 
-Run `/status` and confirm the working directory and permissions.
-
-### Step 3: Request a bounded edit
+Inside the Codex prompt, run `/pwd` and confirm that it reports `$PRACTICE_ROOT`.
+Then use this read-only demonstration prompt:
 
 ```text
-Inspect this project and add one concise "How to verify the setup" subsection
-to README.md. Use only facts supported by files in this repository. Do not
-change code, configuration, or dependencies. Run an appropriate documentation
-check if one exists, then summarize the evidence you used.
+Read README.md and explain what this practice project is for. Do not edit files
+or run commands. Name the file you inspected and tell me what is not present in
+the repository.
 ```
 
-### Step 4: Review the result
+Expected result: Codex identifies `README.md`, explains its purpose, and leaves
+the working tree unchanged.
+
+### Step 4: Request a bounded edit
+
+```text
+Edit only README.md in this practice repository. Add this section after the
+existing paragraph, preserving all existing text:
+
+## How to verify the setup
+
+- Run `git status --short` to confirm the working tree state.
+- Run `git log -1 --oneline` to display the repository's latest commit.
+
+Do not create or edit any other file. Do not add dependencies or change Git
+history. After editing, run `git diff --check` and summarize the file changed,
+the verification result, and any assumption you made.
+```
+
+The requested result is deliberately small: one README section with two
+commands that are valid in this repository. Codex should not invent a test
+framework or modify configuration to complete it.
+
+### Step 5: Review the result
 
 If you are using the CLI, run `/diff`; in another surface, open its changes view. If the practice project uses Git, inspect the working tree from a second terminal:
 
@@ -219,16 +299,46 @@ git diff -- README.md
 
 Without Git, open the README and confirm that only the intended section changed.
 
-### Step 5: Verify
+### Step 6: Verify
 
-Run the documentation check named by the repository. If there is none, confirm that headings render correctly and every command or link in the new subsection exists.
+Run the checks yourself, not only from Codex's summary:
+
+```bash
+git diff --check
+rg -n '^## How to verify the setup$|git status --short|git log -1 --oneline' README.md
+git status --short
+```
+
+Expected result:
+
+- `git diff --check` exits successfully.
+- `rg` finds the new heading and both command examples.
+- `git status --short` reports only `README.md`.
 
 ### Success criteria
 
 - Only `README.md` changed.
-- The new text is supported by repository evidence.
-- The relevant check passes, or the manual verification is documented.
+- The new text matches the copy-ready request and uses repository evidence.
+- The independent checks pass.
 - You can explain the difference between the sandbox and approval policy used.
+
+### What you learned
+
+You completed the basic Codex loop: establish the correct project context, ask
+a read-only question, give a bounded edit request, review the diff, and run an
+independent verification command.
+
+### Step 7: Clean up
+
+Exit Codex, then remove only the disposable repository when you no longer need
+the example:
+
+```bash
+rm -rf "$PRACTICE_ROOT"
+unset PRACTICE_ROOT TUTORIAL_ROOT
+```
+
+Do not substitute the Codex How To repository path for `$PRACTICE_ROOT`.
 
 ### Optional follow-up: a small code change
 

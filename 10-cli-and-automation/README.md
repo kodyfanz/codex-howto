@@ -228,24 +228,174 @@ The tutorial workflow does not post a comment or mutate the repository. Add
 external writes only after defining a separate permissioned job and explicit
 human authority.
 
-## Hands-on exercise
+## Hands-on exercise: validate a read-only automation wrapper
 
-1. Run `codex exec --help` and compare it with this lesson.
-2. Inspect the prompt, schema, wrapper, and workflow examples.
-3. Run `bash -n` on the wrapper and parse the schema and workflow locally.
-4. In a disposable authenticated Git repository, invoke the wrapper once.
-5. Confirm JSONL and final JSON are separate and the final JSON validates.
-6. Introduce an invalid schema path and confirm the script exits nonzero.
-7. Explain why the example uses a manual CI trigger and no write permission.
+This exercise reviews the wrapper, schema, prompt, and GitHub Actions examples
+without publishing or mutating anything. An authenticated `codex exec` run is
+optional because it can consume usage and requires credentials; the static
+checks and failure-path test are always safe to perform. Follow the steps in
+order. The first directory in which you run Codex must be the practice
+repository, not this tutorial checkout.
+
+### Step 0 — Enter the tutorial checkout
+
+```bash
+cd /path/to/codex-howto
+TUTORIAL_ROOT="$PWD"
+```
+
+### Step 1 — Create an isolated practice repository
+
+Create a disposable Git repository outside this checkout, outside another
+repository, and outside a parent tree that already contains a project-level
+`AGENTS.md`.
+
+```bash
+PRACTICE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/codex-cli-practice.XXXXXX")"
+git init -q "$PRACTICE_ROOT"
+mkdir -p "$PRACTICE_ROOT/src" "$PRACTICE_ROOT/examples"
+printf '%s\n' '# CLI automation practice' '' 'No code changes are required for the review.' > "$PRACTICE_ROOT/README.md"
+printf '%s\n' '# Example source' > "$PRACTICE_ROOT/src/example.md"
+cp 10-cli-and-automation/examples/read-only-review.md "$PRACTICE_ROOT/examples/read-only-review.md"
+cp 10-cli-and-automation/examples/review-schema.json "$PRACTICE_ROOT/examples/review-schema.json"
+cp 10-cli-and-automation/examples/run-read-only-review.sh "$PRACTICE_ROOT/examples/run-read-only-review.sh"
+cp 10-cli-and-automation/examples/read-only-review.yml "$PRACTICE_ROOT/examples/read-only-review.yml"
+git -C "$PRACTICE_ROOT" add .
+git -C "$PRACTICE_ROOT" -c user.name='Codex learner' -c user.email='codex-learner.invalid' commit -qm 'Create CLI practice baseline'
+printf 'Practice project: %s\n' "$PRACTICE_ROOT"
+test "$(git -C "$PRACTICE_ROOT" rev-parse --show-toplevel)" = "$PRACTICE_ROOT"
+git -C "$PRACTICE_ROOT" status --short
+find "$PRACTICE_ROOT" \( -name 'AGENTS.md' -o -name 'AGENTS.override.md' \) -print
+```
+
+Expected result: the repository is clean and the final `find` command prints
+nothing. If you already know how to prepare this project, you may skip the
+setup block, assign its absolute path to `PRACTICE_ROOT`, and copy the same
+example files yourself.
+
+### Step 2 — Inspect the installed CLI safely
+
+Run help and version commands before building an automation around a flag:
+
+```bash
+cd "$PRACTICE_ROOT"
+codex --version
+codex exec --help
+codex exec resume --help
+```
+
+Expected result: the commands exit successfully and show the flags used by the
+lesson. If Codex is not installed, record that prerequisite and continue with
+the static checks; do not install software or add credentials to the practice
+repository as a workaround.
+
+### Step 3 — Validate the wrapper, schema, and workflow locally
+
+Inspect the prompt before treating repository content as input, then validate
+the shell and JSON artifacts:
+
+```bash
+sed -n '1,180p' examples/read-only-review.md
+bash -n examples/run-read-only-review.sh
+python3 -m json.tool examples/review-schema.json >/dev/null
+rg -n 'read-only|approval_policy|output-schema|output-last-message|--json' examples/run-read-only-review.sh
+rg -n 'workflow_dispatch|contents: read|persist-credentials: false|sandbox: read-only|drop-sudo' examples/read-only-review.yml
+```
+
+Expected result: the wrapper uses a read-only sandbox, separates JSONL events
+from the final JSON, checks exit status and output, and the workflow has a
+manual trigger, read-only repository permission, no persistent checkout
+credential, and `drop-sudo`.
+
+### Step 4 — Test a deterministic failure path
+
+The wrapper must fail before invoking Codex when its prompt file is missing.
+Test that input validation without an API key or model call:
+
+```bash
+set +e
+bash examples/run-read-only-review.sh missing-prompt.md output-missing
+RESULT="$?"
+set -e
+test "$RESULT" -eq 2
+test ! -e output-missing/events.jsonl
+```
+
+Expected result: the wrapper exits with status `2`, reports the missing prompt,
+and creates no event output. A nonzero status is failure even when partial output
+exists; automation must not pass it to a downstream mutation step.
+
+### Step 5 — Optionally run the authenticated read-only wrapper
+
+Only perform this step if the CLI is installed, `jq` is available, and you
+already have an approved authentication method. The wrapper invokes the model
+and can consume usage; do not place the key in a prompt, file, or command line.
+
+```bash
+if command -v codex >/dev/null && command -v jq >/dev/null; then
+  bash examples/run-read-only-review.sh \
+    examples/read-only-review.md \
+    output-review
+  test -s output-review/events.jsonl
+  test -s output-review/final.json
+  jq -e . output-review/final.json >/dev/null
+else
+  printf '%s\n' 'Skipping authenticated wrapper run: codex or jq is unavailable.'
+fi
+```
+
+Expected result for a completed run: `events.jsonl` contains lifecycle JSONL,
+`final.json` contains only the schema-constrained final object, and `jq`
+validates that object. If the run fails authentication or initialization, keep
+the diagnostics, report the category, and do not treat an empty final file as
+“no findings.”
+
+### Step 6 — Review CI authority and output boundaries
+
+Inspect the workflow and answer these questions before any real CI use:
+
+```bash
+git status --short
+git diff --check
+git diff -- examples
+```
+
+- Who can trigger the manual workflow?
+- Why is `contents: read` the only repository permission?
+- Where must `OPENAI_API_KEY` be stored, and where must it never appear?
+- Which later job would require separate human approval before posting,
+  merging, deploying, or writing?
+
+Expected result: you can explain that prompt text, pull-request content, and
+repository files are untrusted data; the workflow only produces a review
+artifact; and external writes require a separately permissioned, reviewed job.
 
 ### Success criteria
 
-- Permissions and working directory are explicit.
-- Untrusted content is data, not shell syntax or authority.
-- Exit status is checked before downstream processing.
-- Structured output is validated.
-- CI secrets and repository permissions are minimal.
-- No step publishes or mutates external state automatically.
+- CLI flags and working directory are explicit.
+- Shell syntax, JSON schema, and workflow safety properties validate locally.
+- Missing input returns a nonzero status before model execution.
+- Optional output separates JSONL events from schema-constrained final JSON.
+- Secrets and repository permissions are minimal and never copied into files.
+- No step publishes, merges, deploys, or mutates external state automatically.
+
+### What you learned
+
+You practiced turning an interactive prompt into a least-privilege automation,
+handling failure before downstream processing, validating structured output, and
+reviewing CI authority separately from model instructions.
+
+### Step 7 — Clean up
+
+Return to the tutorial checkout and remove only the disposable project:
+
+```bash
+cd "$TUTORIAL_ROOT"
+rm -rf "$PRACTICE_ROOT"
+unset PRACTICE_ROOT TUTORIAL_ROOT
+```
+
+Do not substitute the Codex How To repository path for `$PRACTICE_ROOT`.
 
 ## Troubleshooting
 

@@ -207,23 +207,162 @@ cp -R 03-skills/examples/code-review-specialist \
 Review copied instructions before using them; tutorial examples are not a
 substitute for repository-specific policy.
 
-## Hands-on exercise
+## Hands-on exercise: build and test a small skill
 
-1. Create `.agents/skills/change-summary/SKILL.md` in a disposable repository.
-2. Write a description that triggers for summarizing a Git diff, but not for
-   writing code or committing changes.
-3. Require a user-impact summary, risk list, and verification list.
-4. Invoke it explicitly with `$change-summary`.
-5. Ask indirectly: “Summarize this branch for a reviewer.”
-6. Ask: “Implement the missing tests.” Confirm the skill does not claim the
-   implementation task.
+This exercise creates a disposable project skill that summarizes an existing
+Git diff. Follow the steps in order. The first directory in which you run
+Codex must be the practice repository, not this tutorial checkout.
+
+### Step 0 — Enter the tutorial checkout
+
+```bash
+cd /path/to/codex-howto
+TUTORIAL_ROOT="$PWD"
+```
+
+### Step 1 — Create an isolated practice repository
+
+Create the practice project outside this checkout, outside another repository,
+and outside a parent tree that already contains a project-level `AGENTS.md`.
+This prevents unrelated instructions from affecting skill discovery.
+
+```bash
+PRACTICE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/codex-skills-practice.XXXXXX")"
+git init -q "$PRACTICE_ROOT"
+mkdir -p "$PRACTICE_ROOT/.agents/skills/change-summary"
+printf '%s\n' '# Skill practice project' > "$PRACTICE_ROOT/README.md"
+printf 'Practice project: %s\n' "$PRACTICE_ROOT"
+test "$(git -C "$PRACTICE_ROOT" rev-parse --show-toplevel)" = "$PRACTICE_ROOT"
+find "$PRACTICE_ROOT" \( -name 'AGENTS.md' -o -name 'AGENTS.override.md' \) -print
+```
+
+The final command should print nothing. The directory under `.agents/skills`
+is the project-local discovery path that this exercise tests.
+
+If you already know how to create a clean practice repository, you may skip
+this setup block. Assign its absolute path to `PRACTICE_ROOT`, create the same
+`.agents/skills/change-summary/` directory, and verify the Git root before
+continuing.
+
+### Step 2 — Write the copy-ready skill
+
+Create the file at the exact project-local path:
+
+```bash
+cat > "$PRACTICE_ROOT/.agents/skills/change-summary/SKILL.md" <<'EOF'
+---
+name: change-summary
+description: Summarize an existing Git diff for a reviewer with user impact, risks, and verification evidence. Use for review summaries or branch summaries. Do not use for implementing code, editing files, or committing changes.
+---
+
+# Change summary
+
+Review the current Git diff without editing files or committing changes.
+
+Return:
+
+1. A concise user-impact summary.
+2. A risk list grounded in the diff; say "None found" when appropriate.
+3. A verification list containing checks that actually ran and checks that remain.
+
+Do not invent changed files, tests, or behavior. Ask one focused question when
+the repository or diff is unavailable.
+EOF
+```
+
+The heredoc is a convenient way to create the exact file. If your shell or
+policy does not allow it, create the same file in an editor without changing
+its path or content.
+
+### Step 3 — Enter the practice project and start Codex
+
+The skill is project-local, so the starting directory matters.
+
+```bash
+cd "$PRACTICE_ROOT"
+pwd
+git status --short
+codex
+```
+
+Confirm that `/pwd` reports `$PRACTICE_ROOT`, then use `/skills` to check that
+`change-summary` is discoverable. If it is not listed, inspect the path and
+restart the Codex session before testing invocation.
+
+### Step 4 — Test explicit invocation
+
+Use this prompt in the Codex session:
+
+```text
+$change-summary Summarize the current branch for a reviewer. Do not edit files
+or commit anything. Separate user impact, risks, and verification evidence.
+```
+
+Expected result: the skill is selected explicitly and returns the three
+requested sections. Since the practice repository has no meaningful diff yet,
+it should state that evidence is limited rather than inventing changes.
+
+### Step 5 — Test matching indirect invocation
+
+Ask the same goal without naming the skill:
+
+```text
+Summarize this branch for a reviewer. Do not modify files or commit changes.
+Report user impact, risks, and which verification checks actually ran.
+```
+
+Expected result: Codex may select `change-summary` implicitly because the goal
+matches its description. The output must still be grounded in repository state.
+
+### Step 6 — Test the boundary
+
+Use a neighboring request that should not route to this skill:
+
+```text
+Implement the missing tests for the current project and commit the changes.
+```
+
+Expected result: `change-summary` is not the right workflow. Codex should ask
+for missing requirements or use another workflow; it must not pretend that a
+review-summary skill can implement or commit code.
+
+### Step 7 — Verify independently
+
+Exit Codex and run these checks from the practice project:
+
+```bash
+test -f .agents/skills/change-summary/SKILL.md
+rg -n '^name: change-summary$|^description:|Do not use for implementing|^# Change summary$' .agents/skills/change-summary/SKILL.md
+git status --short
+```
+
+Expected result: the file exists, the metadata and boundary language are
+present, and only the intended skill file is untracked.
 
 ### Success criteria
 
-- The skill validates structurally.
-- Direct and matching indirect requests select it.
-- The neighboring request does not incorrectly route to it.
-- The output is grounded in the actual diff and invents no changes.
+- The skill is at `.agents/skills/change-summary/SKILL.md` with valid metadata.
+- Explicit and matching indirect requests follow its output contract.
+- The neighboring implementation/commit request does not use it to edit or
+  commit.
+- Outputs describe only evidence available in the practice repository.
+
+### What you learned
+
+You can distinguish a repeatable workflow from a one-off prompt or repository
+rule, write a discriminating description, use progressive disclosure, and test
+positive and negative routing cases.
+
+### Step 8 — Clean up
+
+Remove only the disposable project after reviewing the result:
+
+```bash
+rm -rf "$PRACTICE_ROOT"
+unset PRACTICE_ROOT TUTORIAL_ROOT
+```
+
+Do not substitute the Codex How To repository path for `$PRACTICE_ROOT`.
 
 ## Troubleshooting
 

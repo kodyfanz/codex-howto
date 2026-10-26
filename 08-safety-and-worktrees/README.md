@@ -232,22 +232,165 @@ discard outstanding work first.
 
 ## Hands-on exercise: isolated documentation change
 
-1. Use a disposable Git repository with at least one committed file.
-2. Confirm the main checkout is clean.
-3. Create a sibling worktree and a new branch as shown above.
-4. Ask Codex to make one documentation-only change in that worktree.
-5. Run the repository's documentation checks and inspect the diff from both
-   checkouts.
-6. Choose deliberately: commit and integrate the change, or remove the
-   worktree after verifying no work must be retained.
+This exercise combines least-privilege settings, a command-rule check, and a
+manual Git worktree. It never runs a destructive command or contacts a remote
+service. Follow the steps in order. The first directory in which you run Codex
+must be the practice repository or its dedicated worktree, not this checkout.
+
+### Step 0 — Enter the tutorial checkout
+
+```bash
+cd /path/to/codex-howto
+TUTORIAL_ROOT="$PWD"
+```
+
+### Step 1 — Create a clean practice repository
+
+Create the repository outside this checkout, outside another repository, and
+outside a parent tree that already contains a project-level `AGENTS.md`.
+
+```bash
+PRACTICE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/codex-safety-practice.XXXXXX")"
+git init -q "$PRACTICE_ROOT"
+printf '%s\n' '# Safety practice project' '' 'Baseline documentation.' > "$PRACTICE_ROOT/README.md"
+git -C "$PRACTICE_ROOT" add README.md
+git -C "$PRACTICE_ROOT" -c user.name='Codex learner' -c user.email='codex-learner.invalid' commit -qm 'Create safety baseline'
+mkdir -p "$PRACTICE_ROOT/.codex/rules"
+cp 08-safety-and-worktrees/examples/default.rules "$PRACTICE_ROOT/.codex/rules/default.rules"
+cp 08-safety-and-worktrees/examples/least-privilege-config.toml "$PRACTICE_ROOT/.codex/config.toml"
+printf 'Practice project: %s\n' "$PRACTICE_ROOT"
+test "$(git -C "$PRACTICE_ROOT" rev-parse --show-toplevel)" = "$PRACTICE_ROOT"
+git -C "$PRACTICE_ROOT" status --short
+find "$PRACTICE_ROOT" \( -name 'AGENTS.md' -o -name 'AGENTS.override.md' \) -print
+```
+
+Expected result: the Git status is clean and the final `find` command prints
+nothing. If you already know how to create a clean practice repository, you may
+skip this setup block, assign its absolute path to `PRACTICE_ROOT`, and prepare
+the same config and rules files yourself.
+
+### Step 2 — Test rules without running their target commands
+
+From the practice repository, check one prompt rule and one forbidden rule:
+
+```bash
+cd "$PRACTICE_ROOT"
+codex execpolicy check --pretty --rules .codex/rules/default.rules -- gh pr view 42
+codex execpolicy check --pretty --rules .codex/rules/default.rules -- git push --force origin example-branch
+```
+
+Expected result: the first command reports `prompt`; the second reports
+`forbidden`. These commands inspect decisions only—they do not run `gh` or
+`git push`. Also check negative examples:
+
+```bash
+codex execpolicy check --pretty --rules .codex/rules/default.rules -- gh issue list
+codex execpolicy check --pretty --rules .codex/rules/default.rules -- git push origin example-branch
+```
+
+Record the decisions before continuing. An unexpected broad match is a reason
+to narrow the rule, not to grant full access.
+
+### Step 3 — Create and inspect an exact worktree
+
+Resolve the worktree path before creating it. Use a sibling path outside the
+main checkout:
+
+```bash
+WORKTREE_ROOT="${PRACTICE_ROOT}-worktree"
+git -C "$PRACTICE_ROOT" worktree add -b codex/docs-update "$WORKTREE_ROOT" HEAD
+git -C "$PRACTICE_ROOT" worktree list
+git -C "$WORKTREE_ROOT" status --short
+```
+
+Expected result: Git lists both checkouts and the new worktree starts clean on
+branch `codex/docs-update`.
+
+### Step 4 — Start Codex with least privilege in the worktree
+
+```bash
+codex --cd "$WORKTREE_ROOT" --sandbox workspace-write --ask-for-approval on-request
+```
+
+Inside Codex, run `/pwd` and `/status`. Confirm that the directory is
+`$WORKTREE_ROOT`, the sandbox is `workspace-write`, and full access is not
+enabled. Do not use `danger-full-access` to bypass a failed write or approval.
+
+### Step 5 — Request one bounded documentation edit
+
+Use this complete prompt:
+
+```text
+In this worktree, edit only README.md. Add a short section titled
+"## Worktree verification" with two sentences explaining that this checkout is
+an isolated branch and that the original checkout remains unchanged. Do not
+edit configuration, rules, or Git metadata. Do not run network commands. Show
+the diff and run `git diff --check`.
+```
+
+Expected result: only the worktree's `README.md` changes. Codex may ask for
+approval for a command; inspect the exact request before approving it.
+
+### Step 6 — Review from both checkouts
+
+Exit Codex and compare the worktree with the original checkout:
+
+```bash
+git -C "$WORKTREE_ROOT" status --short
+git -C "$WORKTREE_ROOT" diff --check
+git -C "$WORKTREE_ROOT" diff -- README.md
+git -C "$PRACTICE_ROOT" status --short
+git -C "$PRACTICE_ROOT" diff -- README.md
+```
+
+Expected result: the worktree shows only the intended README edit; the original
+checkout remains clean and has no copy of that edit. This demonstrates checkout
+isolation, not a security boundary—the same commands could still affect the
+worktree if permissions allowed them.
+
+### Step 7 — Choose an explicit recovery path
+
+For this disposable exercise, do not merge or push. First confirm that no work
+must be retained, then remove the exact worktree and branch:
+
+```bash
+git -C "$WORKTREE_ROOT" status --short
+git -C "$PRACTICE_ROOT" worktree list
+git -C "$PRACTICE_ROOT" worktree remove "$WORKTREE_ROOT"
+git -C "$PRACTICE_ROOT" branch -d codex/docs-update
+```
+
+If the status is not what you expect, stop and preserve the work instead of
+adding `--force`. A real project should commit, review, and integrate changes
+according to its normal workflow before cleanup.
 
 ### Success criteria
 
-- The original checkout remains unchanged during work.
-- Codex runs with `workspace-write`, not full access.
-- The final diff contains only the intended documentation change.
-- Cleanup names an exact path and happens only after status inspection.
-- You can explain which risks the worktree did and did not reduce.
+- Rule checks distinguish prompt, forbidden, and negative examples without
+  executing target commands.
+- The worktree starts clean and has an exact, verified path.
+- Codex runs with `workspace-write` and `on-request`, not full access.
+- Only the worktree README changes; the original checkout remains unchanged.
+- Cleanup occurs only after status inspection and never uses forced removal.
+
+### What you learned
+
+You practiced layering user authority, approval policy, sandbox, command rules,
+and Git review. You also saw what worktrees isolate—working files and index
+state—and what they do not isolate: permissions, external services, or unsafe
+commands.
+
+### Step 8 — Clean up the disposable repository
+
+Return to the tutorial checkout, then remove only the exact temporary project:
+
+```bash
+cd "$TUTORIAL_ROOT"
+rm -rf "$PRACTICE_ROOT"
+unset PRACTICE_ROOT WORKTREE_ROOT TUTORIAL_ROOT
+```
+
+Do not substitute the Codex How To repository path for `$PRACTICE_ROOT`.
 
 ## Troubleshooting
 
