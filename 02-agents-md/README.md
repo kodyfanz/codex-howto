@@ -140,11 +140,15 @@ methods for the root file.
 
 ### Step 3 — Finalize the root guidance
 
+Goal: finish one accurate root `AGENTS.md` and understand that `/init` and the
+manual template are two ways to reach the same project-scoped result.
+
 Choose exactly one path:
 
-- **Generated path:** inspect the `AGENTS.md` created by `/init`, replace its
-  placeholders, and keep only commands you have verified in this practice
-  project.
+- **Generated path:** inspect the `AGENTS.md` created by `/init`, keep the
+  useful guidance, remove unverified claims, and add only commands verified in
+  this practice project. The file may not contain placeholders. Use the minimum
+  shape below as a checklist, not as a replacement.
 - **Template path:** return to the tutorial checkout and copy the template:
 
   ```bash
@@ -153,9 +157,24 @@ Choose exactly one path:
   ```
 
 If you choose the template path, replace every bracketed placeholder before
-continuing. The root file describes the whole practice project, not one service.
+continuing. The root file describes this practice project, not one service.
 If you choose the generated path, edit that generated file in place instead;
 do not overwrite it with the template afterward.
+
+The two files do not need identical wording. The final file must describe the
+actual repository, use verified commands (or state that none exist), and apply
+from the project root downward. Do not keep illustrative paths or commands that
+do not exist in the practice project.
+
+Read the final file once before adding nested guidance:
+
+```bash
+cd "$PRACTICE_ROOT"
+sed -n '1,220p' AGENTS.md
+```
+
+Check that paths and commands match the practice project and that no secret,
+personal path, or permission bypass appears.
 
 The following is the minimum useful shape:
 
