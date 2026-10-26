@@ -98,6 +98,8 @@ single tutorial configuration.
 Rules control which command prefixes Codex can run outside the sandbox. They are
 experimental and use Starlark files under `rules/` beside an active config
 layer, such as `.codex/rules/default.rules` in a trusted project.
+Save the following example as `<repo>/.codex/rules/default.rules`; it is not a
+shell command and must not be pasted into `config.toml` or `AGENTS.md`.
 
 ```starlark
 prefix_rule(

@@ -87,6 +87,10 @@ In the interactive CLI, `/mcp` shows active servers and their tools.
 
 ## Configure stdio in TOML
 
+These snippets belong in a Codex TOML configuration file: use
+`~/.codex/config.toml` for a personal server or `<repo>/.codex/config.toml`
+for a trusted project-specific server. Do not paste them into `AGENTS.md`.
+
 ```toml
 [mcp_servers.context7]
 command = "npx"
@@ -109,12 +113,15 @@ execution environment.
 
 ## Configure streamable HTTP in TOML
 
+Add the following table to the same user- or project-scoped `config.toml` file:
+
 ```toml
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
 ```
 
-For bearer-token authentication, store only the environment variable name:
+For bearer-token authentication, add this table to that same `config.toml`
+file and store only the environment variable name:
 
 ```toml
 [mcp_servers.example_service]
@@ -145,6 +152,9 @@ credentials before using it on a shared machine.
 ## Limit tools and approvals
 
 Restrict a server to the tools the workflow needs:
+Add these tables to the relevant server section in the same `config.toml` file.
+This is optional and is useful only when the workflow needs a narrower allowlist
+or explicit approval behavior.
 
 ```toml
 [mcp_servers.example_service]
