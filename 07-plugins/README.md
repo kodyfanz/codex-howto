@@ -87,6 +87,10 @@ also requires transport information.
 
 ## Minimal compatibility manifest
 
+Save this object as `my-plugin/.codex-plugin/plugin.json` inside the plugin
+root shown above. Replace the package metadata and paths with verified values
+for a real plugin before validation.
+
 ```json
 {
   "name": "change-review",

@@ -69,6 +69,9 @@ Use `/hooks` in the CLI to inspect sources, review changes, or disable a hook.
 ## Configuration shape
 
 A hook has three levels: event, matcher group, and handler.
+For a project-scoped JSON configuration, save this object as
+`<repo>/.codex/hooks.json`; for a user-scoped hook, use `~/.codex/hooks.json`.
+Do not place JSON hook definitions in `AGENTS.md` or `.codex/config.toml`.
 
 ```json
 {
