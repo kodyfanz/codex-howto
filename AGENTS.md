@@ -14,8 +14,13 @@ This repository is a standalone tutorial project for Codex. Every claim, command
 
 - Keep numbered tutorial modules in learning order.
 - Each module contains a `README.md` plus copy-ready examples where useful.
+- Treat placeholder-bearing files in `examples/` as reusable source templates,
+  not as the completed learner output; the lesson must show the concrete
+  practice content separately.
 - Use `.agents/skills/` for project skills and `.codex/agents/` for project custom-agent definitions.
 - Use `.codex/config.toml` and Codex hook configuration formats for project configuration examples.
+- Never edit `site/` or `dist/` as curriculum sources; rebuild them from the
+  authored files with the release tooling.
 - Update the root index and learning roadmap whenever a module is added or its position changes.
 
 ## Documentation rules
@@ -71,7 +76,9 @@ requires a different workflow; explain the exception in the lesson.
 
 ## Workflow
 
-- Keep changes scoped to the current repository status and validate them with the release quality gate documented in `scripts/README.md`.
-- Preserve unrelated user changes.
+- Keep changes scoped to the current repository status and preserve unrelated
+  user changes.
+- Run focused checks while editing and the release quality gate documented in
+  `scripts/README.md` before handoff.
 - Do not commit or push unless the user explicitly requests it.
 - Run the relevant documentation checks after each completed phase once the validation toolchain has been ported.
