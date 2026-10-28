@@ -290,12 +290,14 @@ linters, permissions, or approval controls.
 
 ### Step 6 — Clean up
 
-When you are done, remove only the disposable repository created for this
-exercise:
+Exit Codex with `/exit` (or close the session), then use a terminal in the
+tutorial checkout. Return there before removing the disposable repository:
 
 ```bash
+cd "$TUTORIAL_ROOT"
+test -n "$PRACTICE_ROOT" && test "$PRACTICE_ROOT" != "$TUTORIAL_ROOT"
 rm -rf "$PRACTICE_ROOT"
-unset PRACTICE_ROOT
+unset PRACTICE_ROOT TUTORIAL_ROOT
 ```
 
 Do not substitute the Codex How To repository path for `$PRACTICE_ROOT`.

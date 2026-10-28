@@ -292,7 +292,7 @@ security boundary.
 
 ### Step 4 — Start Codex and inspect trust
 
-Start Codex from the practice project:
+From a terminal currently at `$PRACTICE_ROOT`, start Codex:
 
 ```bash
 codex
@@ -305,7 +305,7 @@ after its definition changes.
 
 ### Step 5 — Exercise the safe path
 
-Ask Codex to run a harmless command:
+While the Codex session is active, enter this request in its prompt:
 
 ```text
 Run the harmless shell command `printf 'hook-safe'`. Do not edit files.
@@ -317,7 +317,8 @@ expected harmless request.
 
 ### Step 6 — Exercise the deny path without running it
 
-Do not ask Codex to execute a destructive command. Instead, run the existing
+Do not ask Codex to execute a destructive command. Exit Codex with `/exit` (or
+use a second terminal at `$PRACTICE_ROOT`), then run the existing
 simulated-input tests and inspect the documented denial shape:
 
 ```bash
@@ -359,9 +360,12 @@ and verify a deny path without risking a real side effect.
 
 ### Step 8 — Clean up
 
-Exit Codex and remove only the disposable project:
+Exit Codex with `/exit` (or close the session), then use a terminal in the
+tutorial checkout. Return there before removing the disposable project:
 
 ```bash
+cd "$TUTORIAL_ROOT"
+test -n "$PRACTICE_ROOT" && test "$PRACTICE_ROOT" != "$TUTORIAL_ROOT"
 rm -rf "$PRACTICE_ROOT"
 unset PRACTICE_ROOT TUTORIAL_ROOT
 ```

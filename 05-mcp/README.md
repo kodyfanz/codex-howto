@@ -308,6 +308,8 @@ configuration checks—do not weaken approval settings to hide the failure.
 
 ### Step 4 — Start Codex and inspect active tools
 
+From the terminal currently at `$PRACTICE_ROOT`, start Codex:
+
 ```bash
 codex
 ```
@@ -319,7 +321,7 @@ substitute for reviewing server behavior.
 
 ### Step 5 — Make one read-only documentation request
 
-Use this copy-ready prompt:
+Remain in the active Codex prompt and enter this copy-ready request:
 
 ```text
 Use only the configured OpenAI Docs MCP server to find the current official
@@ -367,9 +369,12 @@ credentials outside version control, and verify the source of retrieved claims.
 
 ### Step 7 — Clean up
 
-Exit Codex and remove only the disposable project when you are finished:
+Exit Codex with `/exit` (or close the session), then use a terminal in the
+tutorial checkout. Return there before removing the disposable project:
 
 ```bash
+cd "$TUTORIAL_ROOT"
+test -n "$PRACTICE_ROOT" && test "$PRACTICE_ROOT" != "$TUTORIAL_ROOT"
 rm -rf "$PRACTICE_ROOT"
 unset PRACTICE_ROOT TUTORIAL_ROOT
 ```

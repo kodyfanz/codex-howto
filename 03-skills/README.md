@@ -292,6 +292,9 @@ its path or content.
 
 The skill is project-local, so the starting directory matters.
 
+From a terminal currently at `$PRACTICE_ROOT`, start the interactive Codex
+session:
+
 ```bash
 cd "$PRACTICE_ROOT"
 pwd
@@ -305,7 +308,8 @@ restart the Codex session before testing invocation.
 
 ### Step 4 — Test explicit invocation
 
-Use this prompt in the Codex session:
+After `/skills` confirms the skill is available, remain in the active Codex
+prompt and enter this request:
 
 ```text
 $change-summary Summarize the current branch for a reviewer. Do not edit files
@@ -318,7 +322,7 @@ it should state that evidence is limited rather than inventing changes.
 
 ### Step 5 — Test matching indirect invocation
 
-Ask the same goal without naming the skill:
+Still in the active Codex prompt, ask the same goal without naming the skill:
 
 ```text
 Summarize this branch for a reviewer. Do not modify files or commit changes.
@@ -330,7 +334,8 @@ matches its description. The output must still be grounded in repository state.
 
 ### Step 6 — Test the boundary
 
-Use a neighboring request that should not route to this skill:
+Still in the active Codex prompt, use a neighboring request that should not
+route to this skill:
 
 ```text
 Implement the missing tests for the current project and commit the changes.
@@ -369,9 +374,12 @@ positive and negative routing cases.
 
 ### Step 8 — Clean up
 
-Remove only the disposable project after reviewing the result:
+Exit Codex with `/exit` (or close the session), then use a terminal in the
+tutorial checkout. Return there before removing the disposable project:
 
 ```bash
+cd "$TUTORIAL_ROOT"
+test -n "$PRACTICE_ROOT" && test "$PRACTICE_ROOT" != "$TUTORIAL_ROOT"
 rm -rf "$PRACTICE_ROOT"
 unset PRACTICE_ROOT TUTORIAL_ROOT
 ```

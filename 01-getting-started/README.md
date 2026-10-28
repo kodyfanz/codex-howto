@@ -263,6 +263,9 @@ If either result differs, stop and correct the directory first.
 
 ### Step 3: Start Codex and confirm context
 
+From the terminal currently at `$PRACTICE_ROOT`, start the interactive Codex
+session:
+
 ```bash
 codex
 ```
@@ -341,10 +344,13 @@ independent verification command.
 
 ### Step 7: Clean up
 
-Exit Codex, then remove only the disposable repository when you no longer need
-the example:
+Exit Codex with `/exit` (or close the session), then use a terminal in the
+tutorial checkout. Do not remove a directory while the current shell is inside
+it:
 
 ```bash
+cd "$TUTORIAL_ROOT"
+test -n "$PRACTICE_ROOT" && test "$PRACTICE_ROOT" != "$TUTORIAL_ROOT"
 rm -rf "$PRACTICE_ROOT"
 unset PRACTICE_ROOT TUTORIAL_ROOT
 ```

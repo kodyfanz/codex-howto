@@ -330,8 +330,8 @@ cd "$PRACTICE_ROOT"
 sed -n '1,220p' plans/ui-docs-workflow.md
 ```
 
-Start Codex from this project and use `/plan`, or paste this request in an
-implementation-capable session:
+From the terminal currently at `$PRACTICE_ROOT`, start Codex. Then use `/plan`,
+or paste this request in the active implementation-capable Codex session:
 
 ```text
 Use plans/ui-docs-workflow.md as the durable plan for a feature that adds a
@@ -365,8 +365,10 @@ not transfer automatically to Cloud.
 
 ### Step 4 — Run a bounded local UI check
 
-Start the smallest possible local server, capture its process ID and log, wait
-for a readiness response, and stop the exact process after checking it:
+Exit Codex with `/exit` (or use a second terminal at `$PRACTICE_ROOT`) before
+running this terminal-only step. Start the smallest possible local server,
+capture its process ID and log, wait for a readiness response, and stop the
+exact process after checking it:
 
 ```bash
 SERVER_LOG="$(mktemp "${TMPDIR:-/tmp}/codex-advanced-server.XXXXXX.log")"
@@ -475,6 +477,7 @@ Return to the tutorial checkout and remove only the disposable project:
 
 ```bash
 cd "$TUTORIAL_ROOT"
+test -n "$PRACTICE_ROOT" && test "$PRACTICE_ROOT" != "$TUTORIAL_ROOT"
 rm -rf "$PRACTICE_ROOT"
 unset PRACTICE_ROOT SERVER_LOG SERVER_PID TUTORIAL_ROOT
 ```

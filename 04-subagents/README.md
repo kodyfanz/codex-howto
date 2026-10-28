@@ -256,6 +256,8 @@ modified `README.md`, and the diff contains the one intentional line.
 
 ### Step 3 — Start Codex and confirm agent configuration
 
+From the terminal currently at `$PRACTICE_ROOT`, start Codex:
+
 ```bash
 codex
 ```
@@ -267,7 +269,7 @@ and do not edit the repository by themselves.
 
 ### Step 4 — Delegate bounded, read-only work
 
-Paste this complete request:
+Remain in the active Codex prompt and paste this complete request:
 
 ```text
 Review the current README.md diff without editing files or committing anything.
@@ -286,7 +288,8 @@ the practice repository.
 ### Step 5 — Inspect and evaluate the results
 
 Use `/subagents` while the work is running to inspect activity. When the main
-agent returns, check the working tree from a terminal:
+agent returns, exit Codex with `/exit` (or open a second terminal) and run these
+checks from a terminal at `$PRACTICE_ROOT`:
 
 ```bash
 git status --short
@@ -331,9 +334,12 @@ scope, decisions, and integration responsibility.
 
 ### Step 7 — Clean up
 
-Remove only the disposable repository after reviewing the result:
+Exit Codex with `/exit` (or close the session), then use a terminal in the
+tutorial checkout. Return there before removing the disposable repository:
 
 ```bash
+cd "$TUTORIAL_ROOT"
+test -n "$PRACTICE_ROOT" && test "$PRACTICE_ROOT" != "$TUTORIAL_ROOT"
 rm -rf "$PRACTICE_ROOT"
 unset PRACTICE_ROOT TUTORIAL_ROOT
 ```
