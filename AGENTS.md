@@ -83,6 +83,18 @@ subject:
   fallback or a clear instruction to stop/skip the dependent step when it is
   unavailable. Never make a learner discover a missing prerequisite only from
   `command not found`.
+- Track execution context explicitly throughout the lesson. Label whether an
+  instruction is for the terminal, an active Codex prompt, or another surface;
+  state the current directory before each directory-sensitive command; and
+  tell the learner to enter Codex (`codex`) before slash commands or prompts.
+  Before showing a terminal command after an active Codex session, explicitly
+  say to exit Codex (`/exit`, or the surface's equivalent) or use a second
+  terminal and name its directory. Do not present a Bash block immediately
+  after a Codex prompt without that transition.
+- Cleanup must be terminal-only and must never remove the directory that the
+  current shell is using. Before `rm -rf "$PRACTICE_ROOT"`, return to a safe
+  directory such as `$TUTORIAL_ROOT`, verify the target path, and only then
+  remove the disposable project. Unset variables after removal.
 - Explain cleanup for disposable resources and identify any command that
   changes external state. Preserve a safe default and never use a real secret,
   account, or machine-specific path.

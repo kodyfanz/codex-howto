@@ -334,13 +334,14 @@ does not approve, deploy, rollback, or contact an external service.
 
 ### Step 5 — Review the skill boundary with Codex
 
-Start Codex from the practice project:
+From a terminal currently at `$PRACTICE_ROOT`, start Codex:
 
 ```bash
 codex
 ```
 
-Confirm `/pwd` reports `$PRACTICE_ROOT`, then ask:
+Confirm `/pwd` reports `$PRACTICE_ROOT`. While still in the active Codex
+prompt, enter:
 
 ```text
 Review plugins/devops-readiness/complete-plan.json using the local
@@ -393,6 +394,7 @@ Exit Codex and remove only the disposable project:
 
 ```bash
 cd "$TUTORIAL_ROOT"
+test -n "$PRACTICE_ROOT" && test "$PRACTICE_ROOT" != "$TUTORIAL_ROOT"
 rm -rf "$PRACTICE_ROOT"
 unset PRACTICE_ROOT TUTORIAL_ROOT
 ```

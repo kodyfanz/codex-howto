@@ -409,6 +409,7 @@ Return to the tutorial checkout and remove only the disposable project:
 
 ```bash
 cd "$TUTORIAL_ROOT"
+test -n "$PRACTICE_ROOT" && test "$PRACTICE_ROOT" != "$TUTORIAL_ROOT"
 rm -rf "$PRACTICE_ROOT"
 unset PRACTICE_ROOT TUTORIAL_ROOT
 ```
