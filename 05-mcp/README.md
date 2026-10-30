@@ -51,6 +51,10 @@ Codex stores MCP settings in `config.toml`:
 - Personal: `~/.codex/config.toml`
 - Trusted project: `.codex/config.toml`
 
+Codex skips the project-local `.codex/` layer for an untrusted project. Start
+Codex from the exact project directory, review the trust prompt when shown,
+and verify the active directory before relying on project-local MCP settings.
+
 The desktop app, CLI, and IDE extension share the local configuration. ChatGPT
 web does not read local Codex config files; hosted ChatGPT workflows use
 installed plugins and workspace-enabled connections.
@@ -287,27 +291,53 @@ rg -n 'token|secret|api[_-]?key|authorization' "$PRACTICE_ROOT/.codex" || true
 Expected result: the server URL and `prompt` approval mode are visible, and the
 credential scan prints nothing.
 
-### Step 3 — Enter the practice project and inspect the server
+### Step 3 — Trust the practice project and inspect the server
 
-Enter the project before starting Codex. This ensures the project-local
-configuration is the one being tested.
+Project-local `.codex/config.toml` is loaded only for a trusted project. From
+the terminal, enter the exact practice root and start Codex:
 
 ```bash
 cd "$PRACTICE_ROOT"
 pwd
+codex
+```
+
+If Codex shows a trust prompt or banner for this path, review the displayed
+path and choose the option that trusts or allows this exact practice project.
+Do not approve a parent, sibling, or unexpected directory. The wording and
+location of this control can vary by Codex surface.
+
+Inside the active Codex prompt, run:
+
+```text
+/pwd
+```
+
+Confirm that it reports `$PRACTICE_ROOT`, then return to the terminal with:
+
+```text
+/exit
+```
+
+The following commands are terminal commands, still run from
+`$PRACTICE_ROOT`:
+
+```bash
 git status --short
 codex mcp list
 codex mcp get openaiDeveloperDocs
 ```
 
-Expected result: `pwd` prints `$PRACTICE_ROOT`; the list shows the configured
-server; and `get` shows the reviewed URL without any secret value. If the
-server is unavailable, record the startup error and continue to the
-configuration checks—do not weaken approval settings to hide the failure.
+Expected result: the list shows the configured server and `get` shows the
+reviewed URL without any secret value. If the server is unavailable, record the
+startup error and continue to the configuration checks—do not weaken approval
+settings to hide the failure. If the server is missing after you trusted the
+exact project, stop and review the path and file location before continuing;
+do not copy project configuration into `AGENTS.md`.
 
 ### Step 4 — Start Codex and inspect active tools
 
-From the terminal currently at `$PRACTICE_ROOT`, start Codex:
+From the terminal currently at `$PRACTICE_ROOT`, start a fresh Codex session:
 
 ```bash
 codex

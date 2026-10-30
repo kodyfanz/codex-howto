@@ -91,6 +91,14 @@ subject:
   say to exit Codex (`/exit`, or the surface's equivalent) or use a second
   terminal and name its directory. Do not present a Bash block immediately
   after a Codex prompt without that transition.
+- When a lesson depends on project-local Codex configuration, hooks, rules, or
+  other trusted-project state, explain the trust gate before the first
+  dependent check. Tell the learner to launch Codex from the exact practice
+  root, review and accept the trust prompt for that path when it appears,
+  verify the active directory with `/pwd`, exit Codex, and rerun the terminal
+  inspection. Do not imply that a project `.codex/` file is active while the
+  project is untrusted; label trust behavior as surface-dependent when the UI
+  wording differs.
 - Cleanup must be terminal-only and must never remove the directory that the
   current shell is using. Before `rm -rf "$PRACTICE_ROOT"`, return to a safe
   directory such as `$TUTORIAL_ROOT`, verify the target path, and only then
