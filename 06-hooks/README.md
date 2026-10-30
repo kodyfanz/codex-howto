@@ -222,8 +222,7 @@ git --version
 rg --version
 ```
 
-Install `rg` or use an equivalent read-only search command before the
-configuration inspection step.
+Follow [Install ripgrep for lesson searches](../01-getting-started/README.md#install-ripgrep-for-lesson-searches), or use an equivalent read-only search command before the configuration inspection step.
 
 ### Step 0 — Enter the tutorial checkout
 

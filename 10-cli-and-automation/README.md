@@ -251,8 +251,7 @@ rg --version
 jq --version
 ```
 
-If `jq` or `rg` is unavailable, install it or replace the corresponding
-read-only checks with an equivalent tool. Skip the authenticated run when
+If `jq` or `rg` is unavailable, install it or follow [Install ripgrep for lesson searches](../01-getting-started/README.md#install-ripgrep-for-lesson-searches), then replace the corresponding read-only checks with an equivalent tool. Skip the authenticated run when
 Codex or credentials are unavailable; never put a key in the practice project.
 
 ### Step 0 — Enter the tutorial checkout

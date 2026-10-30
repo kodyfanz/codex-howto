@@ -191,6 +191,35 @@ rg --version
 If `rg` is unavailable, install it or use an equivalent read-only search such
 as `grep -n` for the verification step.
 
+## Install ripgrep for lesson searches
+
+Several lessons use `rg` (ripgrep) for fast, read-only searches. It is a
+separate command-line utility, not part of Codex. Check first:
+
+```bash
+command -v rg
+rg --version
+```
+
+If the first command prints nothing, install it using the package manager for
+your operating system. Run these commands in a terminal; they change your
+machine's installed software and are not commands to paste into Codex:
+
+```bash
+# macOS with Homebrew
+brew install ripgrep
+
+# Debian or Ubuntu
+sudo apt-get install ripgrep
+
+# Windows PowerShell with WinGet
+winget install BurntSushi.ripgrep.MSVC
+```
+
+Open a new terminal if your shell does not see the updated `PATH`, then rerun
+`rg --version`. If you cannot install software, use the module's documented
+`grep -n` fallback for simple searches and record that substitution.
+
 ### Step 0: Enter the tutorial checkout
 
 Use the real path to this checkout. The variable makes later copy-ready
