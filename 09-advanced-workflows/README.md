@@ -219,9 +219,7 @@ rg --version
 git --version
 ```
 
-Install any missing command or skip the dependent verification step with the
-reason recorded; do not leave a background server running without completing
-the cleanup step.
+For `rg`, follow [Install ripgrep for lesson searches](../01-getting-started/README.md#install-ripgrep-for-lesson-searches); for the other commands, use your operating system's package manager. You may skip a dependent verification step only with the reason recorded; do not leave a background server running without completing the cleanup step.
 
 ### Step 0 — Enter the tutorial checkout
 

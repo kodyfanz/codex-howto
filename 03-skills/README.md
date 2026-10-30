@@ -224,8 +224,7 @@ git --version
 rg --version
 ```
 
-If `rg` is unavailable, install it or replace the lesson's read-only searches
-with an equivalent tool such as `grep -n` before continuing.
+If `rg` is unavailable, follow [Install ripgrep for lesson searches](../01-getting-started/README.md#install-ripgrep-for-lesson-searches), or replace the lesson's read-only searches with an equivalent tool such as `grep -n` before continuing.
 
 ### Step 0 — Enter the tutorial checkout
 

@@ -226,8 +226,7 @@ git --version
 rg --version
 ```
 
-If `rg` is unavailable, install it or replace the read-only scans with an
-equivalent such as `grep -n`. If network access or the MCP server is
+If `rg` is unavailable, follow [Install ripgrep for lesson searches](../01-getting-started/README.md#install-ripgrep-for-lesson-searches), or replace the read-only scans with an equivalent such as `grep -n`. If network access or the MCP server is
 unavailable, continue with local configuration checks and record the live
 connection as skipped; do not weaken approval settings.
 
