@@ -109,6 +109,34 @@ def title_from_markdown(content: str, fallback: str) -> str:
     return fallback
 
 
+def source_language(path: Path) -> str:
+    """Map copy-ready source files to the language label used by code blocks."""
+    suffix = path.suffix.lower()
+    return {
+        ".bash": "bash",
+        ".css": "css",
+        ".html": "html",
+        ".js": "javascript",
+        ".json": "json",
+        ".md": "markdown",
+        ".py": "python",
+        ".sh": "bash",
+        ".toml": "toml",
+        ".ts": "typescript",
+        ".tsx": "tsx",
+        ".yml": "yaml",
+        ".yaml": "yaml",
+        ".rules": "starlark",
+    }.get(suffix, "text")
+
+
+def copy_button_html(epub: bool = False) -> str:
+    """Return the shared copy control used by website code blocks."""
+    if epub:
+        return ""
+    return '<button class="copy-code" type="button" aria-label="Copy code"><span class="copy-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 8V5.5A1.5 1.5 0 0 1 10.5 4h8A1.5 1.5 0 0 1 20 5.5v8a1.5 1.5 0 0 1-1.5 1.5H16M5.5 8h8A1.5 1.5 0 0 1 15 9.5v9A1.5 1.5 0 0 1 13.5 20h-8A1.5 1.5 0 0 1 4 18.5v-9A1.5 1.5 0 0 1 5.5 8Z"/></svg></span><span class="sr-only">Copy code</span></button>'
+
+
 def highlight_code(code: str, language: str) -> str:
     """Apply dependency-free syntax highlighting to common code fences."""
     normalized = language.lower().split("-")[0]
@@ -216,7 +244,12 @@ def render_page(
     if page.source.suffix.lower() == ".md":
         return render_markdown(page.source.read_text(encoding="utf-8"), page.relative, page.output, page_map, epub=epub, mermaid_callback=mermaid_callback)
     content = page.source.read_text(encoding="utf-8")
-    return f'<h1>{html.escape(page.title)}</h1><p>Copy-ready source file: <code>{html.escape(str(page.relative))}</code></p><pre><code>{html.escape(content)}</code></pre>'
+    language = source_language(page.source)
+    escaped = highlight_code(content, language)
+    language_attr = html.escape(language, quote=True)
+    copy_button = copy_button_html(epub)
+    code_block = f'<pre class="language-{language_attr}" data-language="{language_attr}">{copy_button}<code>{escaped}</code></pre>'
+    return f'<h1>{html.escape(page.title)}</h1><p>Copy-ready source file: <code>{html.escape(str(page.relative))}</code></p>{code_block}'
 
 
 def strip_inline_markup(text: str) -> str:
@@ -376,7 +409,7 @@ def render_markdown(
             else:
                 escaped = highlight_code("\n".join(code_lines), code_language)
                 language = html.escape(code_language, quote=True)
-                copy_button = "" if epub else '<button class="copy-code" type="button" aria-label="Copy code"><span class="copy-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 8V5.5A1.5 1.5 0 0 1 10.5 4h8A1.5 1.5 0 0 1 20 5.5v8a1.5 1.5 0 0 1-1.5 1.5H16M5.5 8h8A1.5 1.5 0 0 1 15 9.5v9A1.5 1.5 0 0 1 13.5 20h-8A1.5 1.5 0 0 1 4 18.5v-9A1.5 1.5 0 0 1 5.5 8Z"/></svg></span><span class="sr-only">Copy code</span></button>'
+                copy_button = copy_button_html(epub)
                 if code_language == "mermaid" and mermaid_callback is not None:
                     diagram_href = html.escape(mermaid_callback("\n".join(code_lines), index), quote=True)
                     image = f'<img src="{diagram_href}" alt="Mermaid flowchart" />' if epub else f'<img src="{diagram_href}" alt="Mermaid flowchart">'

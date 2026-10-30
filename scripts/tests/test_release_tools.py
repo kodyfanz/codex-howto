@@ -174,6 +174,17 @@ class BuildTests(unittest.TestCase):
             xhtml = [archive.read(name) for name in archive.namelist() if name.endswith(".xhtml")]
             self.assertFalse(any(b'class="copy-code"' in content for content in xhtml))
 
+    def test_source_file_pages_have_language_labels_and_copy_controls(self) -> None:
+        for relative in (
+            "05-mcp/examples/openai-docs-http.toml.html",
+            "05-mcp/examples/context7-stdio.toml.html",
+            "05-mcp/examples/restricted-http-tools.toml.html",
+        ):
+            content = (self.site / relative).read_text(encoding="utf-8")
+            self.assertIn('class="language-toml"', content)
+            self.assertIn('data-language="toml"', content)
+            self.assertIn('class="copy-code"', content)
+
     def test_website_contains_rendered_diagrams_and_source_fallbacks(self) -> None:
         rendered = [page for page in self.site.rglob("*.html") if b'class="mermaid-diagram"' in page.read_bytes()]
         self.assertEqual(len(rendered), 9)
